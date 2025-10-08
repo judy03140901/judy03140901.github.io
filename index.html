@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <title>個人作業展示頁面</title>
+  <title>我的個人作業頁面</title>
   <style>
     body {
       font-family: 'Noto Sans TC', sans-serif;
       background-color: #fff5f7;
       text-align: center;
       margin-top: 80px;
+      color: #444;
     }
-    h1 { 
-      color: #c05684; 
+    h1 {
+      color: #c05684;
     }
     p {
-      color: #333;
-      font-size: 16px;
+      font-size: 18px;
+      line-height: 1.6;
     }
     button {
       padding: 10px 20px;
@@ -24,28 +25,36 @@
       border-radius: 8px;
       cursor: pointer;
       font-size: 16px;
-      transition: background-color 0.3s;
     }
-    button:hover {
-      background-color: #e887a1;
+    #text {
+      display: none;
+      color: #444;
+      margin-top: 20px;
+    }
+    .info {
+      margin-top: 40px;
+      font-size: 16px;
+      color: #666;
     }
   </style>
 </head>
 <body>
-  <h1>個人作業展示 🌸</h1>
-  <p>這是我第一次使用 HTML、CSS 與 jQuery 製作的個人展示頁面</p>
+  <h1>Hi，我是+0 🌸</h1>
+  <p>這是我第一次用 HTML + CSS + jQuery 製作的個人作業網頁 💗</p>
   
-  <button id="btn">點我顯示互動文字</button>
+  <button id="btn">點我看看互動效果！</button>
+  <p id="text">你按到我啦～這就是 jQuery 的互動效果 ✨</p>
   
-  <p id="text" style="display:none;">已成功點擊按鈕，這是 jQuery 互動效果示範 ✨</p>
+  <div class="info">
+    <p>課程名稱：前端網頁設計基礎</p>
+    <p>學號：03140901</p>
+    <p>日期：2025/10/08</p>
+  </div>
 
-  <!-- 引入 jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    $(document).ready(function() {
-      $("#btn").click(function(){
-        $("#text").fadeIn(800);
-      });
+    $("#btn").click(function(){
+      $("#text").fadeIn(800);
     });
   </script>
 </body>
