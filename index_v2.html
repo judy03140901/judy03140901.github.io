@@ -1,10 +1,52 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>My First Website</title>
-  </head>
-  <body>
-    <h1>Hello, FreeCodeCamp!</h1>
-    <p>This is my first webpage.</p>
-  </body>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>個人作業展示頁面</title>
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #fff5f7;
+      text-align: center;
+      margin-top: 80px;
+    }
+    h1 { 
+      color: #c05684; 
+    }
+    p {
+      color: #333;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #f7a8b8;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #e887a1;
+    }
+  </style>
+</head>
+<body>
+  <h1>個人作業展示 🌸</h1>
+  <p>這是我第一次使用 HTML、CSS 與 jQuery 製作的個人展示頁面</p>
+  
+  <button id="btn">點我顯示互動文字</button>
+  
+  <p id="text" style="display:none;">已成功點擊按鈕，這是 jQuery 互動效果示範 ✨</p>
+
+  <!-- 引入 jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $("#btn").click(function(){
+        $("#text").fadeIn(800);
+      });
+    });
+  </script>
+</body>
 </html>
