@@ -3,28 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>心理測驗小屋</title>
+<title>☀️🌙 心光心理測驗</title>
 <style>
   body {
     font-family: "Noto Sans TC", sans-serif;
-    background: linear-gradient(180deg, #f8f5ff, #e5e0ff);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     margin: 0;
     overflow: hidden;
+    height: 100vh;
+    background: linear-gradient(180deg, #f8f5ff, #e5e0ff);
+    position: relative;
+  }
+
+  /* 粒子背景 */
+  .star {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 4s infinite ease-in-out alternate;
+  }
+
+  @keyframes twinkle {
+    0% { transform: translateY(0) translateX(0) scale(1); opacity:0.5;}
+    50% { transform: translateY(-20px) translateX(10px) scale(1.2); opacity:1;}
+    100% { transform: translateY(0) translateX(0) scale(1); opacity:0.5;}
   }
 
   .container {
+    position: relative;
+    z-index: 1;
     background: #ffffffdd;
     backdrop-filter: blur(8px);
-    padding: 40px;
+    padding: 40px 30px;
     border-radius: 20px;
-    width: 420px;
+    width: 90%;
+    max-width: 480px;
     text-align: center;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    position: relative;
   }
 
   h1 {
@@ -33,7 +50,7 @@
     margin-bottom: 20px;
   }
 
-  .question {
+  #question {
     font-size: 18px;
     color: #444;
     margin-bottom: 20px;
@@ -42,19 +59,21 @@
   }
 
   .options button {
+    display: block;
+    width: 80%;
+    margin: 8px auto;
     background: #b4a8ff;
     color: #fff;
     border: none;
     padding: 10px 16px;
-    margin: 6px;
     border-radius: 10px;
-    cursor: pointer;
     font-size: 16px;
-    transition: background 0.3s ease;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
   }
-
   .options button:hover {
     background: #8e7bff;
+    transform: scale(1.03);
   }
 
   .result {
@@ -62,185 +81,190 @@
     font-size: 18px;
     color: #333;
     margin-top: 20px;
+    line-height: 1.5;
   }
 
   .restart-btn {
     background: #ffd2e8;
     color: #333;
     border: none;
-    padding: 8px 16px;
+    padding: 10px 18px;
     border-radius: 10px;
     cursor: pointer;
     margin-top: 20px;
+    transition: background 0.3s ease;
   }
+  .restart-btn:hover { background: #ffaec5; }
 
-  /* 🌸 Q版小人 */
-  .mascot {
+  /* Q版角色 */
+  .character {
     position: absolute;
-    right: -150px;
     bottom: 0;
-    width: 120px;
-    height: 160px;
-    background: url('https://cdn-icons-png.flaticon.com/512/4712/4712104.png') no-repeat center/contain;
+    width: 100px;
+    height: 140px;
+    background: #ffe0b2;
+    border-radius: 50%;
     animation: float 3s ease-in-out infinite;
+    z-index: 2;
   }
+  .character.sun-boy { left: -60px; }
+  .character.moon-girl { right: -60px; }
 
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
+    0%,100% { transform: translateY(0); }
     50% { transform: translateY(-8px); }
   }
 
-  /* 🌼 對話框 */
+  .character.sun-boy:hover { animation: wave 1s ease-in-out; }
+  .character.moon-girl:hover { animation: blink 1.2s ease-in-out; }
+  @keyframes wave {
+    0% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(5deg); }
+    100% { transform: translateY(0) rotate(0deg); }
+  }
+  @keyframes blink {
+    0%,100% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(-4px); opacity: 0.6; }
+  }
+
+  /* 對話框 */
   .speech-bubble {
     position: absolute;
-    right: -220px;
-    bottom: 120px;
+    width: 160px;
     background: #fff;
     color: #333;
     border-radius: 12px;
     padding: 10px 14px;
-    width: 160px;
-    text-align: left;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     opacity: 0;
     transform: scale(0.8);
     transition: all 0.4s ease;
+    z-index: 2;
   }
-
-  .speech-bubble.active {
-    opacity: 1;
-    transform: scale(1);
-  }
-
+  .speech-bubble.active { opacity: 1; transform: scale(1); }
+  .speech-bubble.left { left: -230px; bottom: 110px; }
+  .speech-bubble.right { right: -230px; bottom: 110px; }
   .speech-bubble::after {
     content: "";
     position: absolute;
-    right: -10px;
-    bottom: 10px;
-    border-width: 8px;
-    border-style: solid;
-    border-color: transparent transparent transparent #fff;
+    width: 0; height: 0;
+    border: 8px solid transparent;
   }
-
+  .speech-bubble.left::after { left: 100%; bottom: 12px; border-left-color: #fff; }
+  .speech-bubble.right::after { right: 100%; bottom: 12px; border-right-color: #fff; }
 </style>
 </head>
 <body>
 
+<div id="stars"></div>
+
 <div class="container">
-  <h1>🌙 心理測驗小屋</h1>
-  <div id="question" class="question"></div>
+  <h1>☀️🌙 心光心理測驗</h1>
+  <div id="question"></div>
   <div id="options" class="options"></div>
   <div id="result" class="result"></div>
   <button id="restart" class="restart-btn" style="display:none;">重新測驗</button>
 
-  <div class="mascot"></div>
-  <div id="bubble" class="speech-bubble">嗨～準備好了嗎？</div>
+  <div class="character sun-boy"></div>
+  <div class="character moon-girl"></div>
+  <div id="bubble-left" class="speech-bubble left"></div>
+  <div id="bubble-right" class="speech-bubble right"></div>
 </div>
 
 <script>
-  const questions = [
-    {
-      text: "你走在森林裡，前方出現一條分岔路，你會？",
-      options: [
-        { text: "選擇左邊明亮的那條路", next: 1 },
-        { text: "走進右邊幽暗的小徑", next: 2 }
-      ]
-    },
-    {
-      text: "你在光亮的路上發現一隻小貓牠受傷了，你會？",
-      options: [
-        { text: "帶回家照顧牠", next: "A" },
-        { text: "幫牠包紮後離開", next: "B" }
-      ]
-    },
-    {
-      text: "在幽暗的小徑中你聽到奇怪的聲音，你會？",
-      options: [
-        { text: "往聲音的方向走去", next: "C" },
-        { text: "轉身離開那裡", next: "D" }
-      ]
-    }
-  ];
+// 產生小星星
+const starCount = 50;
+const starsContainer = document.getElementById('stars');
+for(let i=0;i<starCount;i++){
+  const s = document.createElement('div');
+  s.classList.add('star');
+  s.style.top=Math.random()*100+'%';
+  s.style.left=Math.random()*100+'%';
+  s.style.width=(Math.random()*3+2)+'px';
+  s.style.height=s.style.width;
+  s.style.animationDuration=(Math.random()*3+2)+'s';
+  starsContainer.appendChild(s);
+}
 
-  const results = {
-    A: "🌸 你是溫柔而細膩的人，總是願意為別人付出。",
-    B: "🌿 你心地善良但懂得界線，不會讓自己過度消耗。",
-    C: "🔥 你擁有冒險精神，喜歡挑戰未知的世界。",
-    D: "🌙 你敏銳而謹慎，知道什麼該保護、什麼該放下。"
-  };
+const questions = [
+  { text: "早上起床時，你最常有的感覺是？", options: [{text:"充滿幹勁", score:4},{text:"有點疲憊", score:3},{text:"想再睡一下", score:2},{text:"還沒起來就拖延", score:1}]},
+  { text: "朋友請你幫忙時，你通常？", options: [{text:"馬上答應", score:4},{text:"先想想", score:3},{text:"猶豫才回應", score:2},{text:"想拒絕", score:1}]},
+  { text: "你喜歡的假日活動是？", options: [{text:"和朋友出遊", score:4},{text:"在家看書或發呆", score:3},{text:"處理拖延事項", score:2},{text:"躺著休息", score:1}]},
+  { text: "面對困難時會？", options: [{text:"正面解決", score:4},{text:"先觀察", score:3},{text:"想逃避但嘗試", score:2},{text:"想放棄", score:1}]},
+  { text: "朋友難過時，你會？", options: [{text:"安慰他", score:4},{text:"靜靜陪伴", score:3},{text:"給建議", score:2},{text:"忽略", score:1}]},
+  { text: "你希望被怎麼看？", options: [{text:"活力可靠", score:4},{text:"溫柔體貼", score:3},{text:"安靜自然", score:2},{text:"默默存在", score:1}]},
+  { text: "你如何看待自己？", options: [{text:"每天提醒被愛", score:4},{text:"有時提醒", score:3},{text:"知道難做到", score:2},{text:"覺得不配愛", score:1}]},
+  { text: "受讚美時第一反應？", options: [{text:"真誠接受", score:4},{text:"謙虛開心", score:3},{text:"心裡開心", score:2},{text:"覺得尷尬", score:1}]},
+  { text: "睡前最常做什麼？", options: [{text:"回想今天成就", score:4},{text:"滑手機", score:3},{text:"焦慮翻來覆去", score:2},{text:"擔心明天", score:1}]},
+  { text: "如果今天是最後一天，你會？", options: [{text:"讓身邊人開心", score:4},{text:"安靜陪伴", score:3},{text:"完成未完成事", score:2},{text:"單獨待著", score:1}]}
+];
 
-  const bubbles = {
-    start: "嗨～準備好了嗎？",
-    question: [
-      "這題有點難對吧～慢慢想也可以喔。",
-      "這樣的選擇，好像能看出妳的個性呢～",
-      "別緊張，我都在這裡陪妳。"
-    ],
-    result: [
-      "測完了～想知道結果嗎？✨",
-      "這樣的妳，我覺得很好呀🌷"
-    ]
-  };
+const results = [
+  { min: 36, max: 40, text: "🌞 你是一束耀眼的陽光，充滿活力、溫暖他人。偶爾疲憊也要給自己休息。" },
+  { min: 26, max: 35, text: "🌙 你是靜謐的月光，柔和而有力量。你懂得傾聽，也值得被擁抱。" },
+  { min: 16, max: 25, text: "🌸 你像初晨花瓣，雖脆弱，仍在風中綻放。妳值得被好好對待。" },
+  { min: 10, max: 15, text: "🕊️ 你是安靜的守護者，深藏溫柔與自省。妳的光正在孕育中。" }
+];
 
-  let currentQuestion = 0;
-  const questionEl = document.getElementById("question");
-  const optionsEl = document.getElementById("options");
-  const resultEl = document.getElementById("result");
-  const restartBtn = document.getElementById("restart");
-  const bubbleEl = document.getElementById("bubble");
+const bubblesLeft = ["早安～這題一起加油！","嗯…妳的選擇開始顯露內心色彩了。","別急慢慢來，我在這陪妳。"];
+const bubblesRight = ["真棒～下一題吧！","看見妳的選擇了，很棒。","謝謝妳信任我，快到最後了！"];
 
-  function showQuestion(index) {
-    const q = questions[index];
-    questionEl.innerText = q.text;
-    optionsEl.innerHTML = "";
+let current=0, totalScore=0;
+const qElem=document.getElementById("question");
+const oElem=document.getElementById("options");
+const resElem=document.getElementById("result");
+const restartBtn=document.getElementById("restart");
+const bubbleL=document.getElementById("bubble-left");
+const bubbleR=document.getElementById("bubble-right");
 
-    q.options.forEach(option => {
-      const btn = document.createElement("button");
-      btn.textContent = option.text;
-      btn.onclick = () => handleAnswer(option.next);
-      optionsEl.appendChild(btn);
-    });
+function showBubble(side){
+  let text = side==='left' ? bubblesLeft[Math.floor(Math.random()*bubblesLeft.length)]
+                           : bubblesRight[Math.floor(Math.random()*bubblesRight.length)];
+  const el = side==='left'?bubbleL:bubbleR;
+  el.innerText=text;
+  el.classList.remove('active');
+  setTimeout(()=>el.classList.add('active'),100);
+}
 
-    showBubble(bubbles.question[Math.floor(Math.random() * bubbles.question.length)]);
-  }
-
-  function handleAnswer(next) {
-    if (typeof next === "number") {
-      currentQuestion = next;
-      showQuestion(currentQuestion);
-    } else {
-      showResult(results[next]);
-    }
-  }
-
-  function showResult(text) {
-    questionEl.style.display = "none";
-    optionsEl.style.display = "none";
-    resultEl.style.display = "block";
-    resultEl.innerText = text;
-    restartBtn.style.display = "inline-block";
-    showBubble(bubbles.result[Math.floor(Math.random() * bubbles.result.length)]);
-  }
-
-  restartBtn.addEventListener("click", () => {
-    currentQuestion = 0;
-    questionEl.style.display = "block";
-    optionsEl.style.display = "block";
-    resultEl.style.display = "none";
-    restartBtn.style.display = "none";
-    showQuestion(currentQuestion);
+function showQuestion(){
+  const q = questions[current];
+  qElem.innerText=q.text;
+  oElem.innerHTML="";
+  q.options.forEach(opt=>{
+    const btn=document.createElement("button");
+    btn.textContent=opt.text;
+    btn.onclick=()=>{ totalScore+=opt.score; nextQuestion(); };
+    oElem.appendChild(btn);
   });
+  resElem.style.display='none';
+  oElem.style.display='block';
+  showBubble('left');
+}
 
-  function showBubble(text) {
-    bubbleEl.classList.remove("active");
-    setTimeout(() => {
-      bubbleEl.innerText = text;
-      bubbleEl.classList.add("active");
-    }, 200);
-  }
+function nextQuestion(){
+  current++;
+  if(current<questions.length){ showQuestion(); }
+  else{ showResult(); }
+}
 
-  // 初始化
-  showQuestion(currentQuestion);
+function showResult(){
+  qElem.style.display='none';
+  oElem.style.display='none';
+  resElem.style.display='block';
+  restartBtn.style.display='inline-block';
+  const r = results.find(r=>totalScore>=r.min && totalScore<=r.max);
+  resElem.innerText=r.text;
+  showBubble('right');
+}
+
+restartBtn.addEventListener('click', ()=>{
+  current=0; totalScore=0;
+  qElem.style.display='block'; oElem.style.display='block';
+  resElem.style.display='none'; restartBtn.style.display='none';
+  showQuestion();
+});
+
+showQuestion();
 </script>
 </body>
 </html>
