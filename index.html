@@ -3,172 +3,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>☀️🌙 心光心理測驗</title>
+<title>💡 心光心理測驗</title>
 <style>
-  body {
-    font-family: "Noto Sans TC", sans-serif;
-    margin: 0;
-    overflow: hidden;
-    height: 100vh;
-    background: linear-gradient(180deg, #f8f5ff, #e5e0ff);
-    position: relative;
-  }
+body {
+  font-family: "Noto Sans TC", sans-serif;
+  margin: 0;
+  overflow: hidden;
+  height: 100vh;
+  background: linear-gradient(180deg, #f8f5ff, #e5e0ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
 
-  /* 粒子背景 */
-  .star {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: #fff;
-    border-radius: 50%;
-    opacity: 0.8;
-    animation: twinkle 4s infinite ease-in-out alternate;
-  }
+/* 粒子背景星星 */
+.star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: twinkle 4s infinite ease-in-out alternate;
+}
 
-  @keyframes twinkle {
-    0% { transform: translateY(0) translateX(0) scale(1); opacity:0.5;}
-    50% { transform: translateY(-20px) translateX(10px) scale(1.2); opacity:1;}
-    100% { transform: translateY(0) translateX(0) scale(1); opacity:0.5;}
-  }
+@keyframes twinkle {
+  0% { transform: translateY(0) translateX(0) scale(1); opacity:0.5;}
+  50% { transform: translateY(-20px) translateX(10px) scale(1.2); opacity:1;}
+  100% { transform: translateY(0) translateX(0) scale(1); opacity:0.5;}
+}
 
-  .container {
-    position: relative;
-    z-index: 1;
-    background: #ffffffdd;
-    backdrop-filter: blur(8px);
-    padding: 40px 30px;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 480px;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  }
+/* 淡入煙霧/光暈 */
+.smoke {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  animation: moveSmoke 20s linear infinite;
+  z-index: 0;
+}
 
-  h1 {
-    color: #6650a4;
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
+@keyframes moveSmoke {
+  0% { transform: translate(0,0) rotate(0deg);}
+  100% { transform: translate(50px, -50px) rotate(360deg);}
+}
 
-  #question {
-    font-size: 18px;
-    color: #444;
-    margin-bottom: 20px;
-    min-height: 60px;
-    transition: opacity 0.5s ease;
-  }
+.container {
+  position: relative;
+  z-index: 2;
+  background: #ffffffdd;
+  backdrop-filter: blur(8px);
+  padding: 40px 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 480px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
 
-  .options button {
-    display: block;
-    width: 80%;
-    margin: 8px auto;
-    background: #b4a8ff;
-    color: #fff;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
-  }
-  .options button:hover {
-    background: #8e7bff;
-    transform: scale(1.03);
-  }
+h1 {
+  color: #6650a4;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
 
-  .result {
-    display: none;
-    font-size: 18px;
-    color: #333;
-    margin-top: 20px;
-    line-height: 1.5;
-  }
+#question {
+  font-size: 18px;
+  color: #444;
+  margin-bottom: 20px;
+  min-height: 60px;
+  transition: opacity 0.5s ease;
+}
 
-  .restart-btn {
-    background: #ffd2e8;
-    color: #333;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: background 0.3s ease;
-  }
-  .restart-btn:hover { background: #ffaec5; }
+.options button {
+  display: block;
+  width: 80%;
+  margin: 8px auto;
+  background: #b4a8ff;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.options button:hover {
+  background: #8e7bff;
+  transform: scale(1.03);
+}
 
-  /* Q版角色 */
-  .character {
-    position: absolute;
-    bottom: 0;
-    width: 100px;
-    height: 140px;
-    background: #ffe0b2;
-    border-radius: 50%;
-    animation: float 3s ease-in-out infinite;
-    z-index: 2;
-  }
-  .character.sun-boy { left: -60px; }
-  .character.moon-girl { right: -60px; }
+.result {
+  display: none;
+  font-size: 18px;
+  color: #333;
+  margin-top: 20px;
+  line-height: 1.5;
+}
 
-  @keyframes float {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
+.restart-btn {
+  background: #ffd2e8;
+  color: #333;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background 0.3s ease;
+}
+.restart-btn:hover { background: #ffaec5; }
 
-  .character.sun-boy:hover { animation: wave 1s ease-in-out; }
-  .character.moon-girl:hover { animation: blink 1.2s ease-in-out; }
-  @keyframes wave {
-    0% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-8px) rotate(5deg); }
-    100% { transform: translateY(0) rotate(0deg); }
-  }
-  @keyframes blink {
-    0%,100% { transform: translateY(0); opacity: 1; }
-    50% { transform: translateY(-4px); opacity: 0.6; }
-  }
+/* Q版機器人 */
+.character {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 140px;
+  background: #ffe0b2;
+  border-radius: 50%;
+  animation: float 3s ease-in-out infinite;
+  z-index: 2;
+}
 
-  /* 對話框 */
-  .speech-bubble {
-    position: absolute;
-    width: 160px;
-    background: #fff;
-    color: #333;
-    border-radius: 12px;
-    padding: 10px 14px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    opacity: 0;
-    transform: scale(0.8);
-    transition: all 0.4s ease;
-    z-index: 2;
-  }
-  .speech-bubble.active { opacity: 1; transform: scale(1); }
-  .speech-bubble.left { left: -230px; bottom: 110px; }
-  .speech-bubble.right { right: -230px; bottom: 110px; }
-  .speech-bubble::after {
-    content: "";
-    position: absolute;
-    width: 0; height: 0;
-    border: 8px solid transparent;
-  }
-  .speech-bubble.left::after { left: 100%; bottom: 12px; border-left-color: #fff; }
-  .speech-bubble.right::after { right: 100%; bottom: 12px; border-right-color: #fff; }
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.character:hover { animation: wave 1s ease-in-out; }
+@keyframes wave {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(5deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+/* 對話框 */
+.speech-bubble {
+  position: absolute;
+  width: 220px;
+  background: #fff;
+  color: #333;
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.4s ease;
+  z-index: 2;
+  left: 50%;
+  bottom: 160px;
+  transform: translateX(-50%) scale(0.8);
+}
+.speech-bubble.active { opacity: 1; transform: translateX(-50%) scale(1); }
+
 </style>
 </head>
 <body>
 
+<div class="smoke"></div>
 <div id="stars"></div>
 
 <div class="container">
-  <h1>☀️🌙 心光心理測驗</h1>
+  <h1>💡 心光心理測驗</h1>
   <div id="question"></div>
   <div id="options" class="options"></div>
   <div id="result" class="result"></div>
   <button id="restart" class="restart-btn" style="display:none;">重新測驗</button>
 
-  <div class="character sun-boy"></div>
-  <div class="character moon-girl"></div>
-  <div id="bubble-left" class="speech-bubble left"></div>
-  <div id="bubble-right" class="speech-bubble right"></div>
+  <div class="character"></div>
+  <div id="bubble" class="speech-bubble"></div>
 </div>
 
 <script>
@@ -186,6 +194,7 @@ for(let i=0;i<starCount;i++){
   starsContainer.appendChild(s);
 }
 
+// 心理測驗題目
 const questions = [
   { text: "早上起床時，你最常有的感覺是？", options: [{text:"充滿幹勁", score:4},{text:"有點疲憊", score:3},{text:"想再睡一下", score:2},{text:"還沒起來就拖延", score:1}]},
   { text: "朋友請你幫忙時，你通常？", options: [{text:"馬上答應", score:4},{text:"先想想", score:3},{text:"猶豫才回應", score:2},{text:"想拒絕", score:1}]},
@@ -206,24 +215,26 @@ const results = [
   { min: 10, max: 15, text: "🕊️ 你是安靜的守護者，深藏溫柔與自省。妳的光正在孕育中。" }
 ];
 
-const bubblesLeft = ["早安～這題一起加油！","嗯…妳的選擇開始顯露內心色彩了。","別急慢慢來，我在這陪妳。"];
-const bubblesRight = ["真棒～下一題吧！","看見妳的選擇了，很棒。","謝謝妳信任我，快到最後了！"];
+const bubbleLines = [
+  "早安～一起加油吧！",
+  "嗯…你的選擇很有趣呢～",
+  "別急慢慢來，我在這陪著你。",
+  "很棒！看見你的努力了。",
+  "答得很好～繼續下一題吧！"
+];
 
-let current=0, totalScore=0;
+let current=0, totalScore=0, bubbleIndex=0;
 const qElem=document.getElementById("question");
 const oElem=document.getElementById("options");
 const resElem=document.getElementById("result");
 const restartBtn=document.getElementById("restart");
-const bubbleL=document.getElementById("bubble-left");
-const bubbleR=document.getElementById("bubble-right");
+const bubble=document.getElementById("bubble");
 
-function showBubble(side){
-  let text = side==='left' ? bubblesLeft[Math.floor(Math.random()*bubblesLeft.length)]
-                           : bubblesRight[Math.floor(Math.random()*bubblesRight.length)];
-  const el = side==='left'?bubbleL:bubbleR;
-  el.innerText=text;
-  el.classList.remove('active');
-  setTimeout(()=>el.classList.add('active'),100);
+function showBubble(){
+  bubble.innerText=bubbleLines[bubbleIndex];
+  bubble.classList.remove('active');
+  setTimeout(()=>bubble.classList.add('active'),100);
+  bubbleIndex=(bubbleIndex+1)%bubbleLines.length;
 }
 
 function showQuestion(){
@@ -238,7 +249,7 @@ function showQuestion(){
   });
   resElem.style.display='none';
   oElem.style.display='block';
-  showBubble('left');
+  showBubble();
 }
 
 function nextQuestion(){
@@ -254,11 +265,11 @@ function showResult(){
   restartBtn.style.display='inline-block';
   const r = results.find(r=>totalScore>=r.min && totalScore<=r.max);
   resElem.innerText=r.text;
-  showBubble('right');
+  showBubble();
 }
 
 restartBtn.addEventListener('click', ()=>{
-  current=0; totalScore=0;
+  current=0; totalScore=0; bubbleIndex=0;
   qElem.style.display='block'; oElem.style.display='block';
   resElem.style.display='none'; restartBtn.style.display='none';
   showQuestion();
