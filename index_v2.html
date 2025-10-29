@@ -3,26 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>心理測驗小屋</title>
+<title>心理測驗小屋+</title>
 <style>
-body { font-family: "Noto Sans TC", sans-serif; background: linear-gradient(180deg, #f8f5ff, #e5e0ff); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-.container { background: #ffffffdd; backdrop-filter: blur(8px); padding: 40px; border-radius: 20px; width: 420px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: relative; }
-h1 { color: #6650a4; font-size: 24px; margin-bottom: 20px; }
-.question { font-size: 18px; color: #444; margin-bottom: 20px; min-height: 60px; transition: opacity 0.5s ease; }
-.options button { background: #b4a8ff; color: #fff; border: none; padding: 10px 16px; margin: 6px; border-radius: 10px; cursor: pointer; font-size: 16px; transition: background 0.3s ease; }
-.options button:hover { background: #8e7bff; }
-.result { display: none; font-size: 18px; color: #333; margin-top: 20px; }
-.restart-btn { background: #ffd2e8; color: #333; border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; margin-top: 20px; }
-.mascot { position: absolute; right: -150px; bottom: 0; width: 120px; height: 160px; background: url('https://cdn-icons-png.flaticon.com/512/4712/4712104.png') no-repeat center/contain; animation: float 3s ease-in-out infinite; }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-.speech-bubble { position: absolute; right: -220px; bottom: 120px; background: #fff; color: #333; border-radius: 12px; padding: 10px 14px; width: 160px; text-align: left; box-shadow: 0 4px 8px rgba(0,0,0,0.1); opacity: 0; transform: scale(0.8); transition: all 0.4s ease; }
-.speech-bubble.active { opacity: 1; transform: scale(1); }
-.speech-bubble::after { content: ""; position: absolute; right: -10px; bottom: 10px; border-width: 8px; border-style: solid; border-color: transparent transparent transparent #fff; }
+body { font-family: "Noto Sans TC", sans-serif; background: linear-gradient(180deg,#f8f5ff,#e5e0ff); display:flex; justify-content:center; align-items:center; height:100vh; margin:0; overflow:hidden; position:relative; }
+.container { background:#ffffffdd; backdrop-filter:blur(8px); padding:40px; border-radius:20px; width:440px; text-align:center; box-shadow:0 4px 20px rgba(0,0,0,0.1); position:relative; }
+h1 { color:#6650a4; font-size:24px; margin-bottom:20px; }
+.question { font-size:18px; color:#444; margin-bottom:20px; min-height:60px; transition:opacity 0.5s ease; }
+.options button { background:#b4a8ff; color:#fff; border:none; padding:10px 16px; margin:6px; border-radius:10px; cursor:pointer; font-size:16px; transition:background 0.3s ease, transform 0.2s ease; }
+.options button:hover { background:#8e7bff; transform:scale(1.03); }
+.result { display:none; font-size:18px; color:#333; margin-top:20px; }
+.restart-btn { background:#ffd2e8; color:#333; border:none; padding:8px 16px; border-radius:10px; cursor:pointer; margin-top:20px; transition:background 0.3s ease; }
+.restart-btn:hover { background:#ffaec5; }
+
+/* Q版小人 */
+.mascot { position:absolute; right:-150px; bottom:0; width:120px; height:160px; background:url('https://cdn-icons-png.flaticon.com/512/4712/4712104.png') no-repeat center/contain; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);} }
+
+/* 搖擺/眨眼特效 */
+.mascot.shake { animation: shake 0.5s ease-in-out; }
+@keyframes shake { 0%,100%{transform:translateY(0) rotate(0deg);}25%{transform:translateY(-5px) rotate(5deg);}50%{transform:translateY(0) rotate(-5deg);}75%{transform:translateY(-5px) rotate(5deg);} }
+
+.mascot.blink { animation: blink 0.2s ease-in-out; }
+@keyframes blink { 0%,100%{opacity:1;}50%{opacity:0.2;} }
+
+/* 對話框 */
+.speech-bubble { position:absolute; right:-220px; bottom:120px; background:#fff; color:#333; border-radius:12px; padding:10px 14px; width:180px; text-align:left; box-shadow:0 4px 8px rgba(0,0,0,0.1); opacity:0; transform:scale(0.8); transition:all 0.4s ease; }
+.speech-bubble.active { opacity:1; transform:scale(1); }
+.speech-bubble::after { content:""; position:absolute; right:-10px; bottom:10px; border-width:8px; border-style:solid; border-color:transparent transparent transparent #fff; }
+
+/* 背景閃亮小光點 */
+.sparkle { position:absolute; width:4px; height:4px; border-radius:50%; background:#fff; opacity:0.7; animation: twinkle 3s infinite alternate; }
+@keyframes twinkle { 0%{opacity:0.3; transform:translate(0,0);}50%{opacity:1; transform:translate(5px,-5px) scale(1.2);}100%{opacity:0.3; transform:translate(0,0);} }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>🌙 心理測驗小屋</h1>
+  <h1>🌙 心理測驗小屋+</h1>
   <div id="question" class="question"></div>
   <div id="options" class="options"></div>
   <div id="result" class="result"></div>
@@ -31,95 +47,96 @@ h1 { color: #6650a4; font-size: 24px; margin-bottom: 20px; }
   <div id="bubble" class="speech-bubble">嗨～準備好了嗎？</div>
 </div>
 <script>
-// 題目設定
-const questions = [
-  { text: "你走在森林裡，前方出現一條分岔路，你會？", options: [ { text: "選擇左邊明亮的那條路", next: 1 }, { text: "走進右邊幽暗的小徑", next: 2 } ] },
-  { text: "你在光亮的路上發現一隻小貓牠受傷了，你會？", options: [ { text: "帶回家照顧牠", next: 3 }, { text: "幫牠包紮後離開", next: 4 } ] },
-  { text: "在幽暗的小徑中你聽到奇怪的聲音，你會？", options: [ { text: "往聲音的方向走去", next: 5 }, { text: "轉身離開那裡", next: 6 } ] },
-  { text: "你發現路旁有一個小湖，你會？", options: [ { text: "停下來欣賞湖景", next: "A" }, { text: "快速走過去不理會", next: "B" } ] },
-  { text: "遇到陌生人向你問路，你會？", options: [ { text: "耐心指路", next: "A" }, { text: "簡單回答後離開", next: "B" } ] },
-  { text: "你聽到遠方傳來小孩的哭聲，你會？", options: [ { text: "過去安慰他", next: "C" }, { text: "忽略繼續前行", next: "D" } ] },
-  { text: "你發現森林裡有一個神秘小屋，你會？", options: [ { text: "進去探險", next: "C" }, { text: "繞過它", next: "D" } ] }
+// 背景閃亮特效
+for(let i=0;i<30;i++){
+  const sparkle=document.createElement("div");
+  sparkle.classList.add("sparkle");
+  sparkle.style.top=Math.random()*100+"%";
+  sparkle.style.left=Math.random()*100+"%";
+  sparkle.style.animationDuration=(Math.random()*3+2)+"s";
+  document.body.appendChild(sparkle);
+}
+
+// 題目
+const questions=[
+  { text:"你走在森林裡，前方出現一條分岔路，你會？", options:[{text:"左邊明亮", next:1},{text:"右邊幽暗", next:2}]},
+  { text:"光亮路上發現受傷小貓，你會？", options:[{text:"帶回家照顧", next:3},{text:"幫忙包紮後離開", next:4}] },
+  { text:"幽暗小徑聽到奇怪聲音，你會？", options:[{text:"走過去", next:5},{text:"轉身離開", next:6}] },
+  { text:"森林裡有小湖，你會？", options:[{text:"停下欣賞", next:7},{text:"快速走過", next:8}] },
+  { text:"遇到陌生人問路，你會？", options:[{text:"耐心指路", next:7},{text:"簡單回答離開", next:8}] },
+  { text:"聽到小孩哭聲，你會？", options:[{text:"去安慰", next:9},{text:"忽略前行", next:10}] },
+  { text:"發現神秘小屋，你會？", options:[{text:"探險", next:9},{text:"繞過", next:10}] },
+  { text:"夜晚看到流星，你會？", options:[{text:"許願", next:"A"},{text:"只是看", next:"B"}]},
+  { text:"下雨天你喜歡？", options:[{text:"撐傘走路", next:"A"},{text:"穿雨衣奔跑", next:"B"}]},
+  { text:"假日你偏好？", options:[{text:"安靜閱讀", next:"C"},{text:"戶外活動", next:"D"}]},
+  { text:"遇到挑戰任務，你會？", options:[{text:"勇敢嘗試", next:"C"},{text:"先觀察再決定", next:"D"}]},
+  { text:"看到朋友難過，你會？", options:[{text:"安慰他", next:"A"},{text:"默默陪伴", next:"B"}]}
 ];
 
-// 結果設定
-const results = {
-  A: "🌸 你是溫柔而細膩的人，總是願意為別人付出。",
-  B: "🌿 你心地善良但懂得界線，不會讓自己過度消耗。",
-  C: "🔥 你擁有冒險精神，喜歡挑戰未知的世界。",
-  D: "🌙 你敏銳而謹慎，知道什麼該保護、什麼該放下。"
-};
+// 結果
+const results={A:"🌸 溫柔細膩，願意為別人付出。",B:"🌿 善良但懂得界線，不會過度消耗自己。",C:"🔥 冒險精神，喜歡挑戰未知。",D:"🌙 敏銳而謹慎，知道保護與放下。"};
 
 // 對話框文字
-const bubbles = {
-  start: "嗨～準備好了嗎？",
-  question: [
-    "這題有點難對吧～慢慢想也可以喔。",
-    "這樣的選擇，好像能看出妳的個性呢～",
-    "別緊張，我都在這裡陪妳。",
-    "小心選擇，每一步都很重要呢。",
-    "慢慢來，不用著急～"
-  ],
-  result: [
-    "測完了～想知道結果嗎？✨",
-    "這樣的妳，我覺得很好呀🌷",
-    "完成了！看看你的性格屬性吧～"
-  ]
+const bubbles={
+  start:"嗨～準備好了嗎？",
+  question:["這題有點難～慢慢想吧","這選擇能看出你的個性唷","別急，我在這陪你","小心選擇，每一步都重要","慢慢來，不用著急"],
+  result:["測完了～想知道結果嗎？✨","這樣的你很好呀🌷","完成了！看看你的性格屬性吧～"]
 };
 
-let currentQuestion = 0;
-const questionEl = document.getElementById("question");
-const optionsEl = document.getElementById("options");
-const resultEl = document.getElementById("result");
-const restartBtn = document.getElementById("restart");
-const bubbleEl = document.getElementById("bubble");
+let currentQuestion=0;
+const questionEl=document.getElementById("question");
+const optionsEl=document.getElementById("options");
+const resultEl=document.getElementById("result");
+const restartBtn=document.getElementById("restart");
+const bubbleEl=document.getElementById("bubble");
+const mascotEl=document.querySelector(".mascot");
 
-function showQuestion(index) {
-  const q = questions[index];
-  questionEl.innerText = q.text;
-  optionsEl.innerHTML = "";
-  q.options.forEach(option => {
-    const btn = document.createElement("button");
-    btn.textContent = option.text;
-    btn.onclick = () => handleAnswer(option.next);
+function showQuestion(index){
+  const q=questions[index];
+  questionEl.innerText=q.text;
+  optionsEl.innerHTML="";
+  q.options.forEach(option=>{
+    const btn=document.createElement("button");
+    btn.textContent=option.text;
+    btn.onclick=()=>handleAnswer(option.next);
     optionsEl.appendChild(btn);
   });
-  showBubble(bubbles.question[Math.floor(Math.random() * bubbles.question.length)]);
+  showBubble(bubbles.question[Math.floor(Math.random()*bubbles.question.length)]);
+  mascotEl.classList.add("shake");
+  setTimeout(()=>mascotEl.classList.remove("shake"),500);
 }
 
-function handleAnswer(next) {
-  if (typeof next === "number") {
-    currentQuestion = next;
-    showQuestion(currentQuestion);
-  } else {
-    showResult(results[next]);
-  }
+function handleAnswer(next){
+  if(typeof next==="number"){ currentQuestion=next; showQuestion(currentQuestion); }
+  else{ showResult(results[next]); }
 }
 
-function showResult(text) {
-  questionEl.style.display = "none";
-  optionsEl.style.display = "none";
-  resultEl.style.display = "block";
-  resultEl.innerText = text;
-  restartBtn.style.display = "inline-block";
-  showBubble(bubbles.result[Math.floor(Math.random() * bubbles.result.length)]);
+function showResult(text){
+  questionEl.style.display="none";
+  optionsEl.style.display="none";
+  resultEl.style.display="block";
+  resultEl.innerText=text;
+  restartBtn.style.display="inline-block";
+  showBubble(bubbles.result[Math.floor(Math.random()*bubbles.result.length)]);
+  mascotEl.classList.add("blink");
+  setTimeout(()=>mascotEl.classList.remove("blink"),300);
 }
 
-restartBtn.addEventListener("click", () => {
-  currentQuestion = 0;
-  questionEl.style.display = "block";
-  optionsEl.style.display = "block";
-  resultEl.style.display = "none";
-  restartBtn.style.display = "none";
+restartBtn.addEventListener("click",()=>{
+  currentQuestion=0;
+  questionEl.style.display="block";
+  optionsEl.style.display="block";
+  resultEl.style.display="none";
+  restartBtn.style.display="none";
   showQuestion(currentQuestion);
 });
 
-function showBubble(text) {
+function showBubble(text){
   bubbleEl.classList.remove("active");
-  setTimeout(() => {
-    bubbleEl.innerText = text;
+  setTimeout(()=>{
+    bubbleEl.innerText=text;
     bubbleEl.classList.add("active");
-  }, 200);
+  },200);
 }
 
 // 初始化
