@@ -16,7 +16,6 @@ body {
   padding-top: 40px;
   overflow-x: hidden;
 }
-
 .container {
   background: #ffffffdd;
   backdrop-filter: blur(8px);
@@ -27,130 +26,38 @@ body {
   box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   position: relative;
 }
-
-h1 {
-  color: #6650a4;
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.question {
-  font-size: 18px;
-  color: #444;
-  margin-bottom: 20px;
-  min-height: 60px;
-  transition: opacity 0.5s ease;
-}
-
+h1 { color: #6650a4; font-size: 24px; margin-bottom: 20px; }
+.question { font-size: 18px; color: #444; margin-bottom: 20px; min-height: 60px; transition: opacity 0.5s ease; }
 .options button {
-  background: #b4a8ff;
-  color: #fff;
-  border: none;
-  padding: 10px 16px;
-  margin: 6px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background 0.3s ease;
+  background: #b4a8ff; color: #fff; border: none; padding: 10px 16px;
+  margin: 6px; border-radius: 10px; cursor: pointer; font-size: 16px; transition: background 0.3s ease;
 }
 .options button:hover { background: #8e7bff; }
-
-.result {
-  display: none;
-  font-size: 18px;
-  color: #333;
-  margin-top: 20px;
-}
-
-.restart-btn {
-  background: #ffd2e8;
-  color: #333;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-top: 20px;
-}
-
-/* 🌸 Q版小人 */
-.mascot {
-  position: absolute;
-  right: -150px;
-  bottom: 0;
-  width: 120px;
-  height: 160px;
-  background: url('https://cdn-icons-png.flaticon.com/512/4712/4712104.png') no-repeat center/contain;
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
-/* 🌼 對話框 */
+.result { display: none; font-size: 18px; color: #333; margin-top: 20px; }
+.restart-btn { background: #ffd2e8; color: #333; border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; margin-top: 20px; }
+.mascot { position: absolute; right: -150px; bottom: 0; width: 120px; height: 160px; background: url('https://cdn-icons-png.flaticon.com/512/4712/4712104.png') no-repeat center/contain; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 .speech-bubble {
-  position: absolute;
-  right: -220px;
-  bottom: 120px;
-  background: #fff;
-  color: #333;
-  border-radius: 12px;
-  padding: 10px 14px;
-  width: 160px;
-  text-align: left;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.4s ease;
+  position: absolute; right: -220px; bottom: 120px; background: #fff; color: #333; border-radius: 12px;
+  padding: 10px 14px; width: 160px; text-align: left; box-shadow: 0 4px 8px rgba(0,0,0,0.1); opacity: 0; transform: scale(0.8); transition: all 0.4s ease;
 }
 .speech-bubble.active { opacity: 1; transform: scale(1); }
-.speech-bubble::after {
-  content: "";
-  position: absolute;
-  right: -10px;
-  bottom: 10px;
-  border-width: 8px;
-  border-style: solid;
-  border-color: transparent transparent transparent #fff;
-}
-
-/* 📝 歷史紀錄 */
-.history {
-  margin-top: 30px;
-  text-align: left;
-  font-size: 14px;
-}
-.history-header {
-  font-weight: bold;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.history-header button {
-  background: #ffaec5;
-  border: none;
-  border-radius: 6px;
-  padding: 2px 6px;
-  cursor: pointer;
-  font-size: 12px;
-  color: #333;
-}
+.speech-bubble::after { content: ""; position: absolute; right: -10px; bottom: 10px; border-width: 8px; border-style: solid; border-color: transparent transparent transparent #fff; }
+.history { margin-top: 30px; text-align: left; font-size: 14px; }
+.history-header { font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+.history-header button { background: #ffaec5; border: none; border-radius: 6px; padding: 2px 6px; cursor: pointer; font-size: 12px; color: #333; }
 .history-item { margin-top: 6px; }
 </style>
 </head>
 <body>
-
 <div class="container">
   <h1>🌙 心理測驗小屋</h1>
   <div id="question" class="question"></div>
   <div id="options" class="options"></div>
   <div id="result" class="result"></div>
   <button id="restart" class="restart-btn" style="display:none;">重新測驗</button>
-
   <div class="mascot"></div>
   <div id="bubble" class="speech-bubble">嗨～準備好了嗎？</div>
-
   <div class="history">
     <div class="history-header">
       歷史紀錄
@@ -162,22 +69,34 @@ h1 {
 
 <script>
 const questions = [
-  { text: "你走在森林裡，前方出現一條分岔路，你會？", options: [ { text: "選擇左邊明亮的那條路", score: 4, next: 1 }, { text: "走進右邊幽暗的小徑", score: 2, next: 2 } ] },
-  { text: "你在光亮的路上發現一隻小貓牠受傷了，你會？", options: [ { text: "帶回家照顧牠", score: 4, next: "A" }, { text: "幫牠包紮後離開", score: 3, next: "B" } ] },
-  { text: "在幽暗的小徑中你聽到奇怪的聲音，你會？", options: [ { text: "往聲音的方向走去", score: 4, next: "C" }, { text: "轉身離開那裡", score: 2, next: "D" } ] }
+  { text: "你走在森林裡，前方出現一條分岔路，你會？", options: [{text:"左邊明亮的路", score:4,next:1},{text:"右邊幽暗小徑", score:2,next:2}]},
+  { text: "光亮的路上你發現一隻小貓，你會？", options:[{text:"帶回家照顧", score:4,next:3},{text:"幫牠包紮後離開", score:3,next:4}]},
+  { text: "幽暗小徑聽到奇怪聲音，你會？", options:[{text:"走向聲音", score:4,next:5},{text:"轉身離開", score:2,next:6}]},
+  { text: "你遇到一個迷路的小孩，你會？", options:[{text:"帶他回家", score:4,next:7},{text:"幫忙指路", score:3,next:8}]},
+  { text: "看到美麗的湖泊，你會？", options:[{text:"下水游泳", score:4,next:9},{text:"在湖邊拍照", score:3,next:10}]},
+  { text: "夜晚看到流星，你會？", options:[{text:"許願", score:4,next:11},{text:"靜靜欣賞", score:3,next:12}]},
+  { text: "朋友邀你冒險，你會？", options:[{text:"馬上答應", score:4,next:13},{text:"先考慮", score:3,next:14}]},
+  { text: "下雨時你會？", options:[{text:"撐傘散步", score:3,next:"A"},{text:"在家看書", score:4,next:"A"}]},
+  { text: "看到有人需要幫助，你會？", options:[{text:"主動幫助", score:4,next:"B"},{text:"觀察再行動", score:3,next:"B"}]},
+  { text: "遇到困難你會？", options:[{text:"迎難而上", score:4,next:"C"},{text:"找方法避開", score:3,next:"C"}]},
+  { text: "假日你喜歡？", options:[{text:"戶外活動", score:4,next:"D"},{text:"宅在家", score:3,next:"D"}]},
+  { text: "收到禮物你會？", options:[{text:"很開心表達感謝", score:4,next:"A"},{text:"默默珍惜", score:3,next:"A"}]},
+  { text: "面對挑戰你會？", options:[{text:"勇敢面對", score:4,next:"B"},{text:"先觀察情況", score:3,next:"B"}]},
+  { text: "晚間你喜歡做什麼？", options:[{text:"散步思考", score:3,next:"C"},{text:"玩遊戲放鬆", score:4,next:"C"}]},
+  { text: "朋友邀請你聚會，你會？", options:[{text:"熱情參加", score:4,next:"D"},{text:"婉拒休息", score:3,next:"D"}]}
 ];
 
 const results = {
-  A: "🌸 你是溫柔而細膩的人，總是願意為別人付出。",
-  B: "🌿 你心地善良但懂得界線，不會讓自己過度消耗。",
-  C: "🔥 你擁有冒險精神，喜歡挑戰未知的世界。",
-  D: "🌙 你敏銳而謹慎，知道什麼該保護、什麼該放下。"
+  A:"🌸 你是溫柔細膩，總為他人付出。",
+  B:"🌿 你懂得界線，不會過度消耗自己。",
+  C:"🔥 你喜歡冒險，樂於挑戰未知。",
+  D:"🌙 你謹慎敏銳，知道保護與放下。"
 };
 
 const bubbles = {
-  start: "嗨～準備好了嗎？",
-  question: [ "這題有點難對吧～慢慢想也可以喔。", "這樣的選擇，好像能看出妳的個性呢～", "別緊張，我都在這裡陪妳。" ],
-  result: [ "測完了～想知道結果嗎？✨", "這樣的妳，我覺得很好呀🌷" ]
+  start:"嗨～準備好了嗎？",
+  question:["慢慢想也可以喔～","這樣的選擇看得出妳的個性","別緊張，我都在這陪妳"],
+  result:["測完了～想知道結果嗎？✨","這樣的妳，我覺得很好呀🌷"]
 };
 
 let currentQuestion = 0;
@@ -191,84 +110,82 @@ const bubbleEl = document.getElementById("bubble");
 const historyList = document.getElementById("historyList");
 const clearHistoryBtn = document.getElementById("clearHistory");
 
-function showBubble(text) {
+function showBubble(text){
   bubbleEl.classList.remove("active");
-  setTimeout(() => {
-    bubbleEl.innerText = text;
-    bubbleEl.classList.add("active");
-  }, 200);
+  setTimeout(()=>{ bubbleEl.innerText=text; bubbleEl.classList.add("active"); },200);
 }
 
-function showQuestion(index) {
+function showQuestion(index){
   const q = questions[index];
-  questionEl.innerText = `(${index+1}/${questions.length}) ${q.text}`;
+  questionEl.innerText = `(${index+1}/15) ${q.text}`;
   optionsEl.innerHTML = "";
-  q.options.forEach(option => {
+  q.options.forEach(option=>{
     const btn = document.createElement("button");
     btn.textContent = option.text;
-    btn.onclick = () => handleAnswer(option);
+    btn.onclick = ()=>handleAnswer(option);
     optionsEl.appendChild(btn);
   });
-  showBubble(bubbles.question[Math.floor(Math.random() * bubbles.question.length)]);
+  showBubble(bubbles.question[Math.floor(Math.random()*bubbles.question.length)]);
 }
 
-function handleAnswer(option) {
+function animateScore(finalScore){
+  let current=0;
+  const anim = setInterval(()=>{
+    current++;
+    resultEl.innerText = `分數: ${current}`;
+    if(current>=finalScore) clearInterval(anim);
+  },50);
+}
+
+function handleAnswer(option){
   totalScore += option.score;
-  if (typeof option.next === "number") {
-    currentQuestion = option.next;
-    showQuestion(currentQuestion);
-  } else {
-    showResult(option.next);
-  }
+  if(typeof option.next==="number") { currentQuestion=option.next; showQuestion(currentQuestion);}
+  else { showResult(option.next);}
 }
 
-function showResult(key) {
-  questionEl.style.display = "none";
-  optionsEl.style.display = "none";
-  resultEl.style.display = "block";
-  restartBtn.style.display = "inline-block";
-  const text = results[key] + ` (分數: ${totalScore})`;
-  resultEl.innerText = text;
+function showResult(key){
+  questionEl.style.display="none";
+  optionsEl.style.display="none";
+  resultEl.style.display="block";
+  restartBtn.style.display="inline-block";
+  resultEl.innerText = results[key];
+  animateScore(totalScore);
 
-  // 儲存歷史紀錄
-  const history = JSON.parse(localStorage.getItem("quizHistory") || "[]");
-  history.push({ date: new Date().toLocaleString(), score: totalScore, result: results[key] });
-  localStorage.setItem("quizHistory", JSON.stringify(history));
+  const history = JSON.parse(localStorage.getItem("quizHistory")||"[]");
+  history.push({date:new Date().toLocaleString(),score:totalScore,result:results[key]});
+  localStorage.setItem("quizHistory",JSON.stringify(history));
   updateHistory();
-
-  showBubble(bubbles.result[Math.floor(Math.random() * bubbles.result.length)]);
+  showBubble(bubbles.result[Math.floor(Math.random()*bubbles.result.length)]);
 }
 
-function updateHistory() {
-  const history = JSON.parse(localStorage.getItem("quizHistory") || "[]");
-  historyList.innerHTML = "";
-  history.forEach(item => {
+function updateHistory(){
+  const history = JSON.parse(localStorage.getItem("quizHistory")||"[]");
+  historyList.innerHTML="";
+  history.forEach(item=>{
     const div = document.createElement("div");
-    div.className = "history-item";
-    div.innerText = `${item.date} | 分數: ${item.score} | 結果: ${item.result}`;
+    div.className="history-item";
+    div.innerText=`${item.date} | 分數: ${item.score} | 結果: ${item.result}`;
     historyList.appendChild(div);
   });
 }
 
-restartBtn.addEventListener("click", () => {
-  currentQuestion = 0;
-  totalScore = 0;
-  questionEl.style.display = "block";
-  optionsEl.style.display = "block";
-  resultEl.style.display = "none";
-  restartBtn.style.display = "none";
+restartBtn.addEventListener("click",()=>{
+  currentQuestion=0;
+  totalScore=0;
+  questionEl.style.display="block";
+  optionsEl.style.display="block";
+  resultEl.style.display="none";
+  restartBtn.style.display="none";
   showQuestion(currentQuestion);
 });
 
-clearHistoryBtn.addEventListener("click", () => {
+clearHistoryBtn.addEventListener("click",()=>{
   localStorage.removeItem("quizHistory");
   updateHistory();
 });
 
-// 初始化
 updateHistory();
 showQuestion(currentQuestion);
 </script>
-
 </body>
 </html>
