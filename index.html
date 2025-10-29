@@ -1,62 +1,169 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>我的個人作業頁面</title>
+  <title>互動問答小系統 ✨</title>
   <style>
     body {
-      font-family: 'Noto Sans TC', sans-serif;
-      background-color: #fff5f7;
+      font-family: "微軟正黑體", sans-serif;
+      background: linear-gradient(135deg, #f9e0e0, #f8f2ff);
       text-align: center;
-      margin-top: 80px;
-      color: #444;
+      padding: 50px;
+      transition: background 1s ease-in-out;
     }
+
+    .container {
+      background-color: #ffffffcc;
+      border-radius: 16px;
+      padding: 40px;
+      display: inline-block;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
     h1 {
-      color: #c05684;
+      color: #7759c2;
+      letter-spacing: 2px;
+      margin-bottom: 30px;
     }
-    p {
-      font-size: 18px;
-      line-height: 1.6;
-    }
+
     button {
-      padding: 10px 20px;
-      background-color: #f7a8b8;
+      background-color: #dab6fc;
       border: none;
       border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 8px;
       cursor: pointer;
-      font-size: 16px;
+      transition: transform 0.2s, background-color 0.3s;
     }
-    #text {
-      display: none;
-      color: #444;
+
+    button:hover {
+      background-color: #b891f2;
+      transform: scale(1.05);
+    }
+
+    #result {
       margin-top: 20px;
+      font-weight: bold;
+      color: #6644cc;
     }
-    .info {
-      margin-top: 40px;
-      font-size: 16px;
-      color: #666;
+
+    /* 淡入動畫 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 彩帶特效樣式 */
+    #confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 20px;
+      opacity: 0.9;
+      animation: fall 1.5s linear forwards;
+    }
+
+    @keyframes fall {
+      from {
+        transform: translateY(-10px) rotate(0deg);
+      }
+      to {
+        transform: translateY(100vh) rotate(720deg);
+      }
     }
   </style>
 </head>
+
 <body>
-  <h1>Hi，我是+0 🌸</h1>
-  <p>這是我第一次用 HTML + CSS + jQuery 製作的個人作業網頁 💗</p>
-  
-  <button id="btn">點我看看互動效果！</button>
-  <p id="text">你按到我啦～這就是 jQuery 的互動效果 ✨</p>
-  
-  <div class="info">
-    <p>課程名稱：前端網頁設計基礎</p>
-    <p>學號：413570517</p>
-    <p>日期：2025/10/08</p>
+  <div class="container">
+      <h1>互動問答小系統 ✨</h1>
+      <div id="question"></div>
+      <div id="answers"></div>
+      <button id="nextBtn">下一題</button>
+      <div id="result"></div>
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- 彩帶特效區 -->
+  <div id="confetti"></div>
+
   <script>
-    $("#btn").click(function(){
-      $("#text").fadeIn(800);
-    });
+    const questions = [
+        { q: "HTML 是用來做什麼的？", a: ["資料庫管理", "網頁結構標記", "網頁動畫", "伺服器程式"], correct: 1 },
+        { q: "哪個語言用來讓網頁互動？", a: ["CSS", "HTML", "JavaScript", "PHP"], correct: 2 },
+        { q: "CSS 的主要功能是？", a: ["控制樣式與排版", "存資料", "處理邏輯", "傳送資料"], correct: 0 }
+    ];
+
+    let current = 0;
+
+    function showQuestion() {
+        const qDiv = document.getElementById("question");
+        const aDiv = document.getElementById("answers");
+        const rDiv = document.getElementById("result");
+        rDiv.textContent = "";
+        qDiv.textContent = questions[current].q;
+        aDiv.innerHTML = "";
+
+        questions[current].a.forEach((ans, i) => {
+            const btn = document.createElement("button");
+            btn.textContent = ans;
+            btn.onclick = () => checkAnswer(i);
+            aDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(idx) {
+        const rDiv = document.getElementById("result");
+        if (idx === questions[current].correct) {
+            rDiv.textContent = "✅ 答對了！";
+            launchConfetti();
+            playSound("correct");
+        } else {
+            rDiv.textContent = "❌ 再想想～";
+            playSound("wrong");
+        }
+    }
+
+    document.getElementById("nextBtn").onclick = () => {
+        current++;
+        if (current >= questions.length) current = 0;
+        showQuestion();
+    };
+
+    function launchConfetti() {
+        const confetti = document.getElementById("confetti");
+        confetti.innerHTML = "";
+        for (let i = 0; i < 20; i++) {
+            const piece = document.createElement("div");
+            piece.classList.add("confetti-piece");
+            piece.style.left = Math.random() * 100 + "%";
+            piece.style.background = `hsl(${Math.random() * 360}, 80%, 70%)`;
+            confetti.appendChild(piece);
+        }
+        setTimeout(() => confetti.innerHTML = "", 1500);
+    }
+
+    // 答題音效
+    function playSound(type) {
+        const audio = new Audio(
+          type === "correct"
+            ? "https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"
+            : "https://assets.mixkit.co/sfx/preview/mixkit-click-error-1110.mp3"
+        );
+        audio.play();
+    }
+
+    showQuestion();
   </script>
 </body>
 </html>
-
