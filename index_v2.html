@@ -3,18 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>心理測驗小屋</title>
+<title>🌙 心理測驗小屋</title>
 <style>
 body {
   font-family: "Noto Sans TC", sans-serif;
   background: linear-gradient(180deg, #f8f5ff, #e5e0ff);
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  align-items: flex-start;
+  min-height: 100vh;
   margin: 0;
-  overflow: hidden;
+  padding-top: 40px;
+  overflow-x: hidden;
 }
+
 .container {
   background: #ffffffdd;
   backdrop-filter: blur(8px);
@@ -25,11 +27,13 @@ body {
   box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   position: relative;
 }
+
 h1 {
   color: #6650a4;
   font-size: 24px;
   margin-bottom: 20px;
 }
+
 .question {
   font-size: 18px;
   color: #444;
@@ -37,6 +41,7 @@ h1 {
   min-height: 60px;
   transition: opacity 0.5s ease;
 }
+
 .options button {
   background: #b4a8ff;
   color: #fff;
@@ -49,12 +54,14 @@ h1 {
   transition: background 0.3s ease;
 }
 .options button:hover { background: #8e7bff; }
+
 .result {
   display: none;
   font-size: 18px;
   color: #333;
   margin-top: 20px;
 }
+
 .restart-btn {
   background: #ffd2e8;
   color: #333;
@@ -64,6 +71,7 @@ h1 {
   cursor: pointer;
   margin-top: 20px;
 }
+
 /* 🌸 Q版小人 */
 .mascot {
   position: absolute;
@@ -74,10 +82,12 @@ h1 {
   background: url('https://cdn-icons-png.flaticon.com/512/4712/4712104.png') no-repeat center/contain;
   animation: float 3s ease-in-out infinite;
 }
+
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
 }
+
 /* 🌼 對話框 */
 .speech-bubble {
   position: absolute;
@@ -104,173 +114,161 @@ h1 {
   border-style: solid;
   border-color: transparent transparent transparent #fff;
 }
+
+/* 📝 歷史紀錄 */
+.history {
+  margin-top: 30px;
+  text-align: left;
+  font-size: 14px;
+}
+.history-header {
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.history-header button {
+  background: #ffaec5;
+  border: none;
+  border-radius: 6px;
+  padding: 2px 6px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #333;
+}
+.history-item { margin-top: 6px; }
 </style>
 </head>
 <body>
+
 <div class="container">
   <h1>🌙 心理測驗小屋</h1>
   <div id="question" class="question"></div>
   <div id="options" class="options"></div>
   <div id="result" class="result"></div>
   <button id="restart" class="restart-btn" style="display:none;">重新測驗</button>
+
   <div class="mascot"></div>
   <div id="bubble" class="speech-bubble">嗨～準備好了嗎？</div>
+
+  <div class="history">
+    <div class="history-header">
+      歷史紀錄
+      <button id="clearHistory">清除紀錄</button>
+    </div>
+    <div id="historyList"></div>
+  </div>
 </div>
 
 <script>
-// 題目資料
 const questions = [
-  { text: "早上起床時，你最常有的感覺是？", options: [
-    { text:"充滿幹勁", score:4 }, { text:"有點疲憊", score:3 },
-    { text:"想再睡一下", score:2 }, { text:"還沒起來就拖延", score:1 }
-  ]},
-  { text: "朋友請你幫忙時，你通常？", options: [
-    { text:"馬上答應", score:4 }, { text:"先想想", score:3 },
-    { text:"猶豫才回應", score:2 }, { text:"想拒絕", score:1 }
-  ]},
-  { text: "你喜歡的假日活動是？", options: [
-    { text:"和朋友出遊", score:4 }, { text:"在家看書或發呆", score:3 },
-    { text:"處理拖延事項", score:2 }, { text:"躺著休息", score:1 }
-  ]},
-  { text: "面對困難時會？", options: [
-    { text:"正面解決", score:4 }, { text:"先觀察", score:3 },
-    { text:"想逃避但嘗試", score:2 }, { text:"想放棄", score:1 }
-  ]},
-  { text: "朋友難過時，你會？", options: [
-    { text:"安慰他", score:4 }, { text:"靜靜陪伴", score:3 },
-    { text:"給建議", score:2 }, { text:"忽略", score:1 }
-  ]},
-  { text: "你希望被怎麼看？", options: [
-    { text:"活力可靠", score:4 }, { text:"溫柔體貼", score:3 },
-    { text:"安靜自然", score:2 }, { text:"默默存在", score:1 }
-  ]},
-  { text: "你如何看待自己？", options: [
-    { text:"每天提醒被愛", score:4 }, { text:"有時提醒", score:3 },
-    { text:"知道難做到", score:2 }, { text:"覺得不配愛", score:1 }
-  ]},
-  { text: "受讚美時第一反應？", options: [
-    { text:"真誠接受", score:4 }, { text:"謙虛開心", score:3 },
-    { text:"心裡開心", score:2 }, { text:"覺得尷尬", score:1 }
-  ]},
-  { text: "睡前最常做什麼？", options: [
-    { text:"回想今天成就", score:4 }, { text:"滑手機", score:3 },
-    { text:"焦慮翻來覆去", score:2 }, { text:"擔心明天", score:1 }
-  ]},
-  { text: "如果今天是最後一天，你會？", options: [
-    { text:"讓身邊人開心", score:4 }, { text:"安靜陪伴", score:3 },
-    { text:"完成未完成事", score:2 }, { text:"單獨待著", score:1 }
-  ]},
-  { text: "面對未知挑戰，你通常？", options: [
-    { text:"勇於嘗試", score:4 }, { text:"先做功課再決定", score:3 },
-    { text:"有點猶豫", score:2 }, { text:"盡量避免", score:1 }
-  ]},
-  { text: "你最喜歡的休閒方式？", options: [
-    { text:"運動健身", score:4 }, { text:"閱讀或手作", score:3 },
-    { text:"看劇或追番", score:2 }, { text:"睡覺放空", score:1 }
-  ]},
-  { text: "當你焦慮時會？", options: [
-    { text:"跟朋友聊聊", score:4 }, { text:"做深呼吸或冥想", score:3 },
-    { text:"看手機分心", score:2 }, { text:"自己悶著", score:1 }
-  ]},
-  { text: "你面對壓力時？", options: [
-    { text:"積極應對", score:4 }, { text:"找人傾訴", score:3 },
-    { text:"暫時逃避", score:2 }, { text:"完全放任", score:1 }
-  ]},
-  { text: "朋友約你出去，你會？", options: [
-    { text:"馬上答應", score:4 }, { text:"先考慮時間", score:3 },
-    { text:"偶爾拒絕", score:2 }, { text:"通常不去", score:1 }
-  ]},
-  { text: "你覺得自己最大的優點？", options: [
-    { text:"熱情主動", score:4 }, { text:"細心體貼", score:3 },
-    { text:"冷靜沉著", score:2 }, { text:"低調謙虛", score:1 }
-  ]}
+  { text: "你走在森林裡，前方出現一條分岔路，你會？", options: [ { text: "選擇左邊明亮的那條路", score: 4, next: 1 }, { text: "走進右邊幽暗的小徑", score: 2, next: 2 } ] },
+  { text: "你在光亮的路上發現一隻小貓牠受傷了，你會？", options: [ { text: "帶回家照顧牠", score: 4, next: "A" }, { text: "幫牠包紮後離開", score: 3, next: "B" } ] },
+  { text: "在幽暗的小徑中你聽到奇怪的聲音，你會？", options: [ { text: "往聲音的方向走去", score: 4, next: "C" }, { text: "轉身離開那裡", score: 2, next: "D" } ] }
 ];
 
-// 測驗結果
-const results = [
-  { min: 55, max: 60, text: "🌞 你是一束耀眼的陽光，充滿活力、溫暖他人。" },
-  { min: 45, max: 54, text: "🌙 你是靜謐的月光，柔和而有力量。" },
-  { min: 30, max: 44, text: "🌸 你像初晨花瓣，雖脆弱，仍在風中綻放。" },
-  { min: 15, max: 29, text: "🕊️ 你是安靜的守護者，深藏溫柔與自省。" }
-];
-
-// 對話框內容
-const bubbles = {
-  start: "嗨～準備好了嗎？",
-  question: [
-    "慢慢想沒關係～",
-    "這題有趣吧～",
-    "別緊張，我陪你呢～"
-  ],
-  result: [
-    "測完囉～✨",
-    "看看你的結果吧～🌷"
-  ]
+const results = {
+  A: "🌸 你是溫柔而細膩的人，總是願意為別人付出。",
+  B: "🌿 你心地善良但懂得界線，不會讓自己過度消耗。",
+  C: "🔥 你擁有冒險精神，喜歡挑戰未知的世界。",
+  D: "🌙 你敏銳而謹慎，知道什麼該保護、什麼該放下。"
 };
 
-let current = 0;
+const bubbles = {
+  start: "嗨～準備好了嗎？",
+  question: [ "這題有點難對吧～慢慢想也可以喔。", "這樣的選擇，好像能看出妳的個性呢～", "別緊張，我都在這裡陪妳。" ],
+  result: [ "測完了～想知道結果嗎？✨", "這樣的妳，我覺得很好呀🌷" ]
+};
+
+let currentQuestion = 0;
 let totalScore = 0;
+
 const questionEl = document.getElementById("question");
 const optionsEl = document.getElementById("options");
 const resultEl = document.getElementById("result");
 const restartBtn = document.getElementById("restart");
 const bubbleEl = document.getElementById("bubble");
+const historyList = document.getElementById("historyList");
+const clearHistoryBtn = document.getElementById("clearHistory");
 
-// 顯示題目
-function showQuestion(index){
+function showBubble(text) {
+  bubbleEl.classList.remove("active");
+  setTimeout(() => {
+    bubbleEl.innerText = text;
+    bubbleEl.classList.add("active");
+  }, 200);
+}
+
+function showQuestion(index) {
   const q = questions[index];
   questionEl.innerText = `(${index+1}/${questions.length}) ${q.text}`;
   optionsEl.innerHTML = "";
-  q.options.forEach(opt=>{
+  q.options.forEach(option => {
     const btn = document.createElement("button");
-    btn.textContent = opt.text;
-    btn.onclick = ()=>{ totalScore += opt.score; nextQuestion(); };
+    btn.textContent = option.text;
+    btn.onclick = () => handleAnswer(option);
     optionsEl.appendChild(btn);
   });
-  resultEl.style.display='none';
-  optionsEl.style.display='block';
-  showBubble(bubbles.question[Math.floor(Math.random()*bubbles.question.length)]);
+  showBubble(bubbles.question[Math.floor(Math.random() * bubbles.question.length)]);
 }
 
-// 下一題
-function nextQuestion(){
-  current++;
-  if(current<questions.length) showQuestion(current);
-  else showResult();
+function handleAnswer(option) {
+  totalScore += option.score;
+  if (typeof option.next === "number") {
+    currentQuestion = option.next;
+    showQuestion(currentQuestion);
+  } else {
+    showResult(option.next);
+  }
 }
 
-// 顯示結果
-function showResult(){
-  questionEl.style.display='none';
-  optionsEl.style.display='none';
-  resultEl.style.display='block';
-  restartBtn.style.display='inline-block';
-  const r = results.find(r=>totalScore>=r.min && totalScore<=r.max);
-  resultEl.innerText = r.text;
-  showBubble(bubbles.result[Math.floor(Math.random()*bubbles.result.length)]);
+function showResult(key) {
+  questionEl.style.display = "none";
+  optionsEl.style.display = "none";
+  resultEl.style.display = "block";
+  restartBtn.style.display = "inline-block";
+  const text = results[key] + ` (分數: ${totalScore})`;
+  resultEl.innerText = text;
+
+  // 儲存歷史紀錄
+  const history = JSON.parse(localStorage.getItem("quizHistory") || "[]");
+  history.push({ date: new Date().toLocaleString(), score: totalScore, result: results[key] });
+  localStorage.setItem("quizHistory", JSON.stringify(history));
+  updateHistory();
+
+  showBubble(bubbles.result[Math.floor(Math.random() * bubbles.result.length)]);
 }
 
-// 重新測驗
-restartBtn.addEventListener('click', ()=>{
-  current=0; totalScore=0;
-  questionEl.style.display='block';
-  optionsEl.style.display='block';
-  resultEl.style.display='none';
-  restartBtn.style.display='none';
-  showQuestion(current);
+function updateHistory() {
+  const history = JSON.parse(localStorage.getItem("quizHistory") || "[]");
+  historyList.innerHTML = "";
+  history.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "history-item";
+    div.innerText = `${item.date} | 分數: ${item.score} | 結果: ${item.result}`;
+    historyList.appendChild(div);
+  });
+}
+
+restartBtn.addEventListener("click", () => {
+  currentQuestion = 0;
+  totalScore = 0;
+  questionEl.style.display = "block";
+  optionsEl.style.display = "block";
+  resultEl.style.display = "none";
+  restartBtn.style.display = "none";
+  showQuestion(currentQuestion);
 });
 
-// 顯示對話框
-function showBubble(text){
-  bubbleEl.classList.remove('active');
-  setTimeout(()=>{
-    bubbleEl.innerText = text;
-    bubbleEl.classList.add('active');
-  },200);
-}
+clearHistoryBtn.addEventListener("click", () => {
+  localStorage.removeItem("quizHistory");
+  updateHistory();
+});
 
 // 初始化
-showQuestion(current);
+updateHistory();
+showQuestion(currentQuestion);
 </script>
+
 </body>
 </html>
