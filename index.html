@@ -1,255 +1,246 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>心光測驗</title>
-  <style>
-    body {
-      font-family: "Noto Sans TC", sans-serif;
-      background: linear-gradient(to bottom, #fdf6f9, #e7f3ff);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心理測驗小屋</title>
+<style>
+  body {
+    font-family: "Noto Sans TC", sans-serif;
+    background: linear-gradient(180deg, #f8f5ff, #e5e0ff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+  }
 
-    .quiz-card {
-      background: #fff;
-      border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      width: 90%;
-      max-width: 480px;
-      padding: 30px;
-      text-align: center;
-      animation: fadeIn 0.8s ease;
-    }
+  .container {
+    background: #ffffffdd;
+    backdrop-filter: blur(8px);
+    padding: 40px;
+    border-radius: 20px;
+    width: 420px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    position: relative;
+  }
 
-    h2 {
-      color: #444;
-      margin-bottom: 20px;
-      font-size: 20px;
-    }
+  h1 {
+    color: #6650a4;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
 
-    .option {
-      display: block;
-      background: #fff;
-      border: 1.5px solid #ffcde6;
-      border-radius: 12px;
-      padding: 10px;
-      margin: 8px 0;
-      font-size: 15px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
+  .question {
+    font-size: 18px;
+    color: #444;
+    margin-bottom: 20px;
+    min-height: 60px;
+    transition: opacity 0.5s ease;
+  }
 
-    .option:hover {
-      background: #ffeaf4;
-      transform: translateY(-2px);
-    }
+  .options button {
+    background: #b4a8ff;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    margin: 6px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+  }
 
-    .progress {
-      margin-top: 15px;
-      font-size: 13px;
-      color: #999;
-    }
+  .options button:hover {
+    background: #8e7bff;
+  }
 
-    .result {
-      font-size: 18px;
-      color: #555;
-      line-height: 1.8;
-      white-space: pre-line;
-    }
+  .result {
+    display: none;
+    font-size: 18px;
+    color: #333;
+    margin-top: 20px;
+  }
 
-    .button {
-      background: #ff92b3;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: 0.3s ease;
-    }
+  .restart-btn {
+    background: #ffd2e8;
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
 
-    .button:hover {
-      background: #ff6f9d;
-    }
+  /* 🌸 Q版小人 */
+  .mascot {
+    position: absolute;
+    right: -150px;
+    bottom: 0;
+    width: 120px;
+    height: 160px;
+    background: url('https://cdn-icons-png.flaticon.com/512/4712/4712104.png') no-repeat center/contain;
+    animation: float 3s ease-in-out infinite;
+  }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  /* 🌼 對話框 */
+  .speech-bubble {
+    position: absolute;
+    right: -220px;
+    bottom: 120px;
+    background: #fff;
+    color: #333;
+    border-radius: 12px;
+    padding: 10px 14px;
+    width: 160px;
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.4s ease;
+  }
+
+  .speech-bubble.active {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .speech-bubble::after {
+    content: "";
+    position: absolute;
+    right: -10px;
+    bottom: 10px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent transparent #fff;
+  }
+
+</style>
 </head>
 <body>
 
-  <div class="quiz-card" id="quiz">
-    <h2 id="question"></h2>
-    <div id="options"></div>
-    <p class="progress" id="progress"></p>
-  </div>
+<div class="container">
+  <h1>🌙 心理測驗小屋</h1>
+  <div id="question" class="question"></div>
+  <div id="options" class="options"></div>
+  <div id="result" class="result"></div>
+  <button id="restart" class="restart-btn" style="display:none;">重新測驗</button>
 
-  <script>
-    const questions = [
-      { text: "當你感到壓力時，最常選擇的方式是？", options: [
-        { text: "自己一個人安靜待著", score: 2 },
-        { text: "和朋友聊聊天", score: 4 },
-        { text: "做點喜歡的事分散注意", score: 3 },
-        { text: "假裝沒事繼續撐下去", score: 1 }
-      ]},
-      { text: "你對未來的感覺是？", options: [
-        { text: "有點迷茫但仍期待", score: 3 },
-        { text: "充滿計畫與動力", score: 4 },
-        { text: "不知道該往哪裡走", score: 2 },
-        { text: "覺得一切都沒意義", score: 1 }
-      ]},
-      { text: "當有人需要幫助時，你通常會？", options: [
-        { text: "立刻出手幫忙", score: 4 },
-        { text: "想幫但怕幫錯", score: 3 },
-        { text: "猶豫很久才行動", score: 2 },
-        { text: "假裝沒看到", score: 1 }
-      ]},
-      { text: "你覺得自己更接近哪種人？", options: [
-        { text: "理性、穩定", score: 4 },
-        { text: "感性、易受影響", score: 3 },
-        { text: "矛盾、難以理解自己", score: 2 },
-        { text: "外冷內熱", score: 1 }
-      ]},
-      { text: "當你失敗時，你會怎麼做？", options: [
-        { text: "找出問題重來一次", score: 4 },
-        { text: "難過一陣子但會振作", score: 3 },
-        { text: "逃避不想面對", score: 2 },
-        { text: "自責覺得自己不行", score: 1 }
-      ]},
-      { text: "面對別人的關心，你會？", options: [
-        { text: "真誠感謝並回應", score: 4 },
-        { text: "有點害羞但開心", score: 3 },
-        { text: "覺得被看穿很不自在", score: 2 },
-        { text: "懷疑對方的動機", score: 1 }
-      ]},
-      { text: "你更在意的是？", options: [
-        { text: "被理解", score: 3 },
-        { text: "被需要", score: 4 },
-        { text: "不被打擾", score: 2 },
-        { text: "不被討厭", score: 1 }
-      ]},
-      { text: "你理想的一天是？", options: [
-        { text: "和喜歡的人一起吃飯", score: 4 },
-        { text: "一個人靜靜發呆", score: 3 },
-        { text: "完成一件重要的事", score: 4 },
-        { text: "什麼都不想動", score: 2 }
-      ]},
-      { text: "你怎麼看待孤獨？", options: [
-        { text: "習慣但偶爾會怕", score: 3 },
-        { text: "享受它帶來的自由", score: 4 },
-        { text: "覺得被世界遺忘", score: 1 },
-        { text: "無奈卻無法改變", score: 2 }
-      ]},
-      { text: "你相信緣分嗎？", options: [
-        { text: "非常相信", score: 4 },
-        { text: "有點相信", score: 3 },
-        { text: "理性上不信，但心裡希望有", score: 2 },
-        { text: "不相信這種事", score: 1 }
-      ]},
-      { text: "當你被誤會時會？", options: [
-        { text: "努力解釋清楚", score: 4 },
-        { text: "沉默，希望時間證明", score: 3 },
-        { text: "放棄辯解", score: 2 },
-        { text: "生氣然後疏遠對方", score: 1 }
-      ]},
-      { text: "你覺得幸福是什麼？", options: [
-        { text: "被愛也能愛人", score: 4 },
-        { text: "心裡平靜沒有波瀾", score: 3 },
-        { text: "沒有煩惱的時刻", score: 2 },
-        { text: "暫時逃離現實", score: 1 }
-      ]},
-      { text: "你面對改變的態度？", options: [
-        { text: "勇敢迎接挑戰", score: 4 },
-        { text: "害怕但願意嘗試", score: 3 },
-        { text: "排斥改變", score: 2 },
-        { text: "被動接受", score: 1 }
-      ]},
-      { text: "你最希望別人怎麼對你？", options: [
-        { text: "溫柔理解", score: 4 },
-        { text: "信任尊重", score: 3 },
-        { text: "不干涉太多", score: 2 },
-        { text: "怕被關心會負擔", score: 1 }
-      ]},
-      { text: "當世界讓你疲憊時，你希望？", options: [
-        { text: "有人能抱抱我就好", score: 4 },
-        { text: "自己能再撐一會", score: 3 },
-        { text: "什麼都不想想", score: 2 },
-        { text: "消失一陣子", score: 1 }
-      ]}
-    ];
+  <div class="mascot"></div>
+  <div id="bubble" class="speech-bubble">嗨～準備好了嗎？</div>
+</div>
 
-    const results = [
-      { min: 55, max: 60, text: "🌷 你是一個內心溫柔且堅韌的人。\n雖然有時會被世界刺痛，但你的善良從沒被磨掉。\n別忘了，你值得被擁抱、被理解，也值得被好好愛著。" },
-      { min: 40, max: 54, text: "🍃 你正學著與世界溫柔共處。\n雖然偶爾感到疲倦，但你依然有讓生活發光的能力。\n慢一點也沒關係。" },
-      { min: 25, max: 39, text: "☁️ 你有著敏感的心，容易受傷也容易被感動。\n請溫柔對待自己，好嗎？世界不需要你一直堅強，它只希望你能開心地活著。" },
-      { min: 0,  max: 24, text: "🌙 你的世界有點灰，但我想告訴你：你並不孤單。\n當你抬頭的時候，會發現有人正等著你的笑容。\n慢慢來，好嗎？" }
-    ];
-
-    let current = 0;
-    let totalScore = 0;
-
-    const qElem = document.getElementById("question");
-    const oElem = document.getElementById("options");
-    const pElem = document.getElementById("progress");
-
-    function showQuestion() {
-      const q = questions[current];
-      qElem.textContent = q.text;
-      oElem.innerHTML = "";
-      q.options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.className = "option";
-        btn.textContent = opt.text;
-        btn.onclick = () => {
-          totalScore += opt.score;
-          nextQuestion();
-        };
-        oElem.appendChild(btn);
-      });
-      pElem.textContent = `${current + 1} / ${questions.length}`;
+<script>
+  const questions = [
+    {
+      text: "你走在森林裡，前方出現一條分岔路，你會？",
+      options: [
+        { text: "選擇左邊明亮的那條路", next: 1 },
+        { text: "走進右邊幽暗的小徑", next: 2 }
+      ]
+    },
+    {
+      text: "你在光亮的路上發現一隻小貓牠受傷了，你會？",
+      options: [
+        { text: "帶回家照顧牠", next: "A" },
+        { text: "幫牠包紮後離開", next: "B" }
+      ]
+    },
+    {
+      text: "在幽暗的小徑中你聽到奇怪的聲音，你會？",
+      options: [
+        { text: "往聲音的方向走去", next: "C" },
+        { text: "轉身離開那裡", next: "D" }
+      ]
     }
+  ];
 
-    function nextQuestion() {
-      current++;
-      if (current < questions.length) {
-        showQuestion();
-      } else {
-        showResult();
-      }
+  const results = {
+    A: "🌸 你是溫柔而細膩的人，總是願意為別人付出。",
+    B: "🌿 你心地善良但懂得界線，不會讓自己過度消耗。",
+    C: "🔥 你擁有冒險精神，喜歡挑戰未知的世界。",
+    D: "🌙 你敏銳而謹慎，知道什麼該保護、什麼該放下。"
+  };
+
+  const bubbles = {
+    start: "嗨～準備好了嗎？",
+    question: [
+      "這題有點難對吧～慢慢想也可以喔。",
+      "這樣的選擇，好像能看出妳的個性呢～",
+      "別緊張，我都在這裡陪妳。"
+    ],
+    result: [
+      "測完了～想知道結果嗎？✨",
+      "這樣的妳，我覺得很好呀🌷"
+    ]
+  };
+
+  let currentQuestion = 0;
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const resultEl = document.getElementById("result");
+  const restartBtn = document.getElementById("restart");
+  const bubbleEl = document.getElementById("bubble");
+
+  function showQuestion(index) {
+    const q = questions[index];
+    questionEl.innerText = q.text;
+    optionsEl.innerHTML = "";
+
+    q.options.forEach(option => {
+      const btn = document.createElement("button");
+      btn.textContent = option.text;
+      btn.onclick = () => handleAnswer(option.next);
+      optionsEl.appendChild(btn);
+    });
+
+    showBubble(bubbles.question[Math.floor(Math.random() * bubbles.question.length)]);
+  }
+
+  function handleAnswer(next) {
+    if (typeof next === "number") {
+      currentQuestion = next;
+      showQuestion(currentQuestion);
+    } else {
+      showResult(results[next]);
     }
+  }
 
-    function showResult() {
-      const r = results.find(r => totalScore >= r.min && totalScore <= r.max);
-      document.getElementById("quiz").innerHTML = `
-        <h2>測驗結果 💖</h2>
-        <p class="result">${r.text}</p>
-        <button class="button" onclick="restartQuiz()">重新測驗</button>
-      `;
-    }
+  function showResult(text) {
+    questionEl.style.display = "none";
+    optionsEl.style.display = "none";
+    resultEl.style.display = "block";
+    resultEl.innerText = text;
+    restartBtn.style.display = "inline-block";
+    showBubble(bubbles.result[Math.floor(Math.random() * bubbles.result.length)]);
+  }
 
-    function restartQuiz() {
-      current = 0;
-      totalScore = 0;
-      document.getElementById("quiz").innerHTML = `
-        <h2 id="question"></h2>
-        <div id="options"></div>
-        <p class="progress" id="progress"></p>
-      `;
-      qElem = document.getElementById("question");
-      oElem = document.getElementById("options");
-      pElem = document.getElementById("progress");
-      showQuestion();
-    }
+  restartBtn.addEventListener("click", () => {
+    currentQuestion = 0;
+    questionEl.style.display = "block";
+    optionsEl.style.display = "block";
+    resultEl.style.display = "none";
+    restartBtn.style.display = "none";
+    showQuestion(currentQuestion);
+  });
 
-    showQuestion();
-  </script>
+  function showBubble(text) {
+    bubbleEl.classList.remove("active");
+    setTimeout(() => {
+      bubbleEl.innerText = text;
+      bubbleEl.classList.add("active");
+    }, 200);
+  }
+
+  // 初始化
+  showQuestion(currentQuestion);
+</script>
 </body>
 </html>
