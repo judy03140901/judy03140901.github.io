@@ -3,42 +3,112 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>心理測驗小屋+</title>
+<title>心理測驗小屋</title>
 <style>
-body { font-family: "Noto Sans TC", sans-serif; background: linear-gradient(180deg,#f8f5ff,#e5e0ff); display:flex; justify-content:center; align-items:center; height:100vh; margin:0; overflow:hidden; position:relative; }
-.container { background:#ffffffdd; backdrop-filter:blur(8px); padding:40px; border-radius:20px; width:440px; text-align:center; box-shadow:0 4px 20px rgba(0,0,0,0.1); position:relative; }
-h1 { color:#6650a4; font-size:24px; margin-bottom:20px; }
-.question { font-size:18px; color:#444; margin-bottom:20px; min-height:60px; transition:opacity 0.5s ease; }
-.options button { background:#b4a8ff; color:#fff; border:none; padding:10px 16px; margin:6px; border-radius:10px; cursor:pointer; font-size:16px; transition:background 0.3s ease, transform 0.2s ease; }
-.options button:hover { background:#8e7bff; transform:scale(1.03); }
-.result { display:none; font-size:18px; color:#333; margin-top:20px; }
-.restart-btn { background:#ffd2e8; color:#333; border:none; padding:8px 16px; border-radius:10px; cursor:pointer; margin-top:20px; transition:background 0.3s ease; }
-.restart-btn:hover { background:#ffaec5; }
-
-/* Q版小人 */
-.mascot { position:absolute; right:-150px; bottom:0; width:120px; height:160px; background:url('https://cdn-icons-png.flaticon.com/512/4712/4712104.png') no-repeat center/contain; animation: float 3s ease-in-out infinite; }
-@keyframes float { 0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);} }
-
-/* 搖擺/眨眼特效 */
-.mascot.shake { animation: shake 0.5s ease-in-out; }
-@keyframes shake { 0%,100%{transform:translateY(0) rotate(0deg);}25%{transform:translateY(-5px) rotate(5deg);}50%{transform:translateY(0) rotate(-5deg);}75%{transform:translateY(-5px) rotate(5deg);} }
-
-.mascot.blink { animation: blink 0.2s ease-in-out; }
-@keyframes blink { 0%,100%{opacity:1;}50%{opacity:0.2;} }
-
-/* 對話框 */
-.speech-bubble { position:absolute; right:-220px; bottom:120px; background:#fff; color:#333; border-radius:12px; padding:10px 14px; width:180px; text-align:left; box-shadow:0 4px 8px rgba(0,0,0,0.1); opacity:0; transform:scale(0.8); transition:all 0.4s ease; }
-.speech-bubble.active { opacity:1; transform:scale(1); }
-.speech-bubble::after { content:""; position:absolute; right:-10px; bottom:10px; border-width:8px; border-style:solid; border-color:transparent transparent transparent #fff; }
-
-/* 背景閃亮小光點 */
-.sparkle { position:absolute; width:4px; height:4px; border-radius:50%; background:#fff; opacity:0.7; animation: twinkle 3s infinite alternate; }
-@keyframes twinkle { 0%{opacity:0.3; transform:translate(0,0);}50%{opacity:1; transform:translate(5px,-5px) scale(1.2);}100%{opacity:0.3; transform:translate(0,0);} }
+body {
+  font-family: "Noto Sans TC", sans-serif;
+  background: linear-gradient(180deg, #f8f5ff, #e5e0ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+.container {
+  background: #ffffffdd;
+  backdrop-filter: blur(8px);
+  padding: 40px;
+  border-radius: 20px;
+  width: 420px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  position: relative;
+}
+h1 {
+  color: #6650a4;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+.question {
+  font-size: 18px;
+  color: #444;
+  margin-bottom: 20px;
+  min-height: 60px;
+  transition: opacity 0.5s ease;
+}
+.options button {
+  background: #b4a8ff;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  margin: 6px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+.options button:hover { background: #8e7bff; }
+.result {
+  display: none;
+  font-size: 18px;
+  color: #333;
+  margin-top: 20px;
+}
+.restart-btn {
+  background: #ffd2e8;
+  color: #333;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+/* 🌸 Q版小人 */
+.mascot {
+  position: absolute;
+  right: -150px;
+  bottom: 0;
+  width: 120px;
+  height: 160px;
+  background: url('https://cdn-icons-png.flaticon.com/512/4712/4712104.png') no-repeat center/contain;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+/* 🌼 對話框 */
+.speech-bubble {
+  position: absolute;
+  right: -220px;
+  bottom: 120px;
+  background: #fff;
+  color: #333;
+  border-radius: 12px;
+  padding: 10px 14px;
+  width: 160px;
+  text-align: left;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.4s ease;
+}
+.speech-bubble.active { opacity: 1; transform: scale(1); }
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  right: -10px;
+  bottom: 10px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent transparent #fff;
+}
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>🌙 心理測驗小屋+</h1>
+  <h1>🌙 心理測驗小屋</h1>
   <div id="question" class="question"></div>
   <div id="options" class="options"></div>
   <div id="result" class="result"></div>
@@ -46,101 +116,161 @@ h1 { color:#6650a4; font-size:24px; margin-bottom:20px; }
   <div class="mascot"></div>
   <div id="bubble" class="speech-bubble">嗨～準備好了嗎？</div>
 </div>
-<script>
-// 背景閃亮特效
-for(let i=0;i<30;i++){
-  const sparkle=document.createElement("div");
-  sparkle.classList.add("sparkle");
-  sparkle.style.top=Math.random()*100+"%";
-  sparkle.style.left=Math.random()*100+"%";
-  sparkle.style.animationDuration=(Math.random()*3+2)+"s";
-  document.body.appendChild(sparkle);
-}
 
-// 題目
-const questions=[
-  { text:"你走在森林裡，前方出現一條分岔路，你會？", options:[{text:"左邊明亮", next:1},{text:"右邊幽暗", next:2}]},
-  { text:"光亮路上發現受傷小貓，你會？", options:[{text:"帶回家照顧", next:3},{text:"幫忙包紮後離開", next:4}] },
-  { text:"幽暗小徑聽到奇怪聲音，你會？", options:[{text:"走過去", next:5},{text:"轉身離開", next:6}] },
-  { text:"森林裡有小湖，你會？", options:[{text:"停下欣賞", next:7},{text:"快速走過", next:8}] },
-  { text:"遇到陌生人問路，你會？", options:[{text:"耐心指路", next:7},{text:"簡單回答離開", next:8}] },
-  { text:"聽到小孩哭聲，你會？", options:[{text:"去安慰", next:9},{text:"忽略前行", next:10}] },
-  { text:"發現神秘小屋，你會？", options:[{text:"探險", next:9},{text:"繞過", next:10}] },
-  { text:"夜晚看到流星，你會？", options:[{text:"許願", next:"A"},{text:"只是看", next:"B"}]},
-  { text:"下雨天你喜歡？", options:[{text:"撐傘走路", next:"A"},{text:"穿雨衣奔跑", next:"B"}]},
-  { text:"假日你偏好？", options:[{text:"安靜閱讀", next:"C"},{text:"戶外活動", next:"D"}]},
-  { text:"遇到挑戰任務，你會？", options:[{text:"勇敢嘗試", next:"C"},{text:"先觀察再決定", next:"D"}]},
-  { text:"看到朋友難過，你會？", options:[{text:"安慰他", next:"A"},{text:"默默陪伴", next:"B"}]}
+<script>
+// 題目資料
+const questions = [
+  { text: "早上起床時，你最常有的感覺是？", options: [
+    { text:"充滿幹勁", score:4 }, { text:"有點疲憊", score:3 },
+    { text:"想再睡一下", score:2 }, { text:"還沒起來就拖延", score:1 }
+  ]},
+  { text: "朋友請你幫忙時，你通常？", options: [
+    { text:"馬上答應", score:4 }, { text:"先想想", score:3 },
+    { text:"猶豫才回應", score:2 }, { text:"想拒絕", score:1 }
+  ]},
+  { text: "你喜歡的假日活動是？", options: [
+    { text:"和朋友出遊", score:4 }, { text:"在家看書或發呆", score:3 },
+    { text:"處理拖延事項", score:2 }, { text:"躺著休息", score:1 }
+  ]},
+  { text: "面對困難時會？", options: [
+    { text:"正面解決", score:4 }, { text:"先觀察", score:3 },
+    { text:"想逃避但嘗試", score:2 }, { text:"想放棄", score:1 }
+  ]},
+  { text: "朋友難過時，你會？", options: [
+    { text:"安慰他", score:4 }, { text:"靜靜陪伴", score:3 },
+    { text:"給建議", score:2 }, { text:"忽略", score:1 }
+  ]},
+  { text: "你希望被怎麼看？", options: [
+    { text:"活力可靠", score:4 }, { text:"溫柔體貼", score:3 },
+    { text:"安靜自然", score:2 }, { text:"默默存在", score:1 }
+  ]},
+  { text: "你如何看待自己？", options: [
+    { text:"每天提醒被愛", score:4 }, { text:"有時提醒", score:3 },
+    { text:"知道難做到", score:2 }, { text:"覺得不配愛", score:1 }
+  ]},
+  { text: "受讚美時第一反應？", options: [
+    { text:"真誠接受", score:4 }, { text:"謙虛開心", score:3 },
+    { text:"心裡開心", score:2 }, { text:"覺得尷尬", score:1 }
+  ]},
+  { text: "睡前最常做什麼？", options: [
+    { text:"回想今天成就", score:4 }, { text:"滑手機", score:3 },
+    { text:"焦慮翻來覆去", score:2 }, { text:"擔心明天", score:1 }
+  ]},
+  { text: "如果今天是最後一天，你會？", options: [
+    { text:"讓身邊人開心", score:4 }, { text:"安靜陪伴", score:3 },
+    { text:"完成未完成事", score:2 }, { text:"單獨待著", score:1 }
+  ]},
+  { text: "面對未知挑戰，你通常？", options: [
+    { text:"勇於嘗試", score:4 }, { text:"先做功課再決定", score:3 },
+    { text:"有點猶豫", score:2 }, { text:"盡量避免", score:1 }
+  ]},
+  { text: "你最喜歡的休閒方式？", options: [
+    { text:"運動健身", score:4 }, { text:"閱讀或手作", score:3 },
+    { text:"看劇或追番", score:2 }, { text:"睡覺放空", score:1 }
+  ]},
+  { text: "當你焦慮時會？", options: [
+    { text:"跟朋友聊聊", score:4 }, { text:"做深呼吸或冥想", score:3 },
+    { text:"看手機分心", score:2 }, { text:"自己悶著", score:1 }
+  ]},
+  { text: "你面對壓力時？", options: [
+    { text:"積極應對", score:4 }, { text:"找人傾訴", score:3 },
+    { text:"暫時逃避", score:2 }, { text:"完全放任", score:1 }
+  ]},
+  { text: "朋友約你出去，你會？", options: [
+    { text:"馬上答應", score:4 }, { text:"先考慮時間", score:3 },
+    { text:"偶爾拒絕", score:2 }, { text:"通常不去", score:1 }
+  ]},
+  { text: "你覺得自己最大的優點？", options: [
+    { text:"熱情主動", score:4 }, { text:"細心體貼", score:3 },
+    { text:"冷靜沉著", score:2 }, { text:"低調謙虛", score:1 }
+  ]}
 ];
 
-// 結果
-const results={A:"🌸 溫柔細膩，願意為別人付出。",B:"🌿 善良但懂得界線，不會過度消耗自己。",C:"🔥 冒險精神，喜歡挑戰未知。",D:"🌙 敏銳而謹慎，知道保護與放下。"};
+// 測驗結果
+const results = [
+  { min: 55, max: 60, text: "🌞 你是一束耀眼的陽光，充滿活力、溫暖他人。" },
+  { min: 45, max: 54, text: "🌙 你是靜謐的月光，柔和而有力量。" },
+  { min: 30, max: 44, text: "🌸 你像初晨花瓣，雖脆弱，仍在風中綻放。" },
+  { min: 15, max: 29, text: "🕊️ 你是安靜的守護者，深藏溫柔與自省。" }
+];
 
-// 對話框文字
-const bubbles={
-  start:"嗨～準備好了嗎？",
-  question:["這題有點難～慢慢想吧","這選擇能看出你的個性唷","別急，我在這陪你","小心選擇，每一步都重要","慢慢來，不用著急"],
-  result:["測完了～想知道結果嗎？✨","這樣的你很好呀🌷","完成了！看看你的性格屬性吧～"]
+// 對話框內容
+const bubbles = {
+  start: "嗨～準備好了嗎？",
+  question: [
+    "慢慢想沒關係～",
+    "這題有趣吧～",
+    "別緊張，我陪你呢～"
+  ],
+  result: [
+    "測完囉～✨",
+    "看看你的結果吧～🌷"
+  ]
 };
 
-let currentQuestion=0;
-const questionEl=document.getElementById("question");
-const optionsEl=document.getElementById("options");
-const resultEl=document.getElementById("result");
-const restartBtn=document.getElementById("restart");
-const bubbleEl=document.getElementById("bubble");
-const mascotEl=document.querySelector(".mascot");
+let current = 0;
+let totalScore = 0;
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const resultEl = document.getElementById("result");
+const restartBtn = document.getElementById("restart");
+const bubbleEl = document.getElementById("bubble");
 
+// 顯示題目
 function showQuestion(index){
-  const q=questions[index];
-  questionEl.innerText=q.text;
-  optionsEl.innerHTML="";
-  q.options.forEach(option=>{
-    const btn=document.createElement("button");
-    btn.textContent=option.text;
-    btn.onclick=()=>handleAnswer(option.next);
+  const q = questions[index];
+  questionEl.innerText = `(${index+1}/${questions.length}) ${q.text}`;
+  optionsEl.innerHTML = "";
+  q.options.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.textContent = opt.text;
+    btn.onclick = ()=>{ totalScore += opt.score; nextQuestion(); };
     optionsEl.appendChild(btn);
   });
+  resultEl.style.display='none';
+  optionsEl.style.display='block';
   showBubble(bubbles.question[Math.floor(Math.random()*bubbles.question.length)]);
-  mascotEl.classList.add("shake");
-  setTimeout(()=>mascotEl.classList.remove("shake"),500);
 }
 
-function handleAnswer(next){
-  if(typeof next==="number"){ currentQuestion=next; showQuestion(currentQuestion); }
-  else{ showResult(results[next]); }
+// 下一題
+function nextQuestion(){
+  current++;
+  if(current<questions.length) showQuestion(current);
+  else showResult();
 }
 
-function showResult(text){
-  questionEl.style.display="none";
-  optionsEl.style.display="none";
-  resultEl.style.display="block";
-  resultEl.innerText=text;
-  restartBtn.style.display="inline-block";
+// 顯示結果
+function showResult(){
+  questionEl.style.display='none';
+  optionsEl.style.display='none';
+  resultEl.style.display='block';
+  restartBtn.style.display='inline-block';
+  const r = results.find(r=>totalScore>=r.min && totalScore<=r.max);
+  resultEl.innerText = r.text;
   showBubble(bubbles.result[Math.floor(Math.random()*bubbles.result.length)]);
-  mascotEl.classList.add("blink");
-  setTimeout(()=>mascotEl.classList.remove("blink"),300);
 }
 
-restartBtn.addEventListener("click",()=>{
-  currentQuestion=0;
-  questionEl.style.display="block";
-  optionsEl.style.display="block";
-  resultEl.style.display="none";
-  restartBtn.style.display="none";
-  showQuestion(currentQuestion);
+// 重新測驗
+restartBtn.addEventListener('click', ()=>{
+  current=0; totalScore=0;
+  questionEl.style.display='block';
+  optionsEl.style.display='block';
+  resultEl.style.display='none';
+  restartBtn.style.display='none';
+  showQuestion(current);
 });
 
+// 顯示對話框
 function showBubble(text){
-  bubbleEl.classList.remove("active");
+  bubbleEl.classList.remove('active');
   setTimeout(()=>{
-    bubbleEl.innerText=text;
-    bubbleEl.classList.add("active");
+    bubbleEl.innerText = text;
+    bubbleEl.classList.add('active');
   },200);
 }
 
 // 初始化
-showQuestion(currentQuestion);
+showQuestion(current);
 </script>
 </body>
 </html>
