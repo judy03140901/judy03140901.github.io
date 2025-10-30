@@ -67,13 +67,12 @@ h1 { color: #6650a4; font-size: 24px; margin-bottom: 20px; }
   </div>
 </div>
 
-<!-- Firebase SDK -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+  // --- Firebase 初始化 ---
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// Firebase 配置（改成你的）
- const firebaseConfig = {
+  const firebaseConfig = {
     apiKey: "AIzaSyCf0dJj901z6JyFp1dEfBufrBtiztyjQqo",
     authDomain: "psych-test-house.firebaseapp.com",
     projectId: "psych-test-house",
@@ -82,139 +81,138 @@ import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, d
     appId: "1:1084908373457:web:923e6ec4124f48b9a74cf0"
   };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const historyCollection = collection(db,"quizHistory");
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-const questions = [
-  { text: "你走在森林裡，前方出現一條分岔路，你會？", options: [{text:"左邊明亮的路", score:4,next:1},{text:"右邊幽暗小徑", score:2,next:2}]},
-  { text: "光亮的路上你發現一隻小貓，你會？", options:[{text:"帶回家照顧", score:4,next:3},{text:"幫牠包紮後離開", score:3,next:4}]},
-  { text: "幽暗小徑聽到奇怪聲音，你會？", options:[{text:"走向聲音", score:4,next:5},{text:"轉身離開", score:2,next:6}]},
-  { text: "你遇到一個迷路的小孩，你會？", options:[{text:"帶他回家", score:4,next:7},{text:"幫忙指路", score:3,next:8}]},
-  { text: "看到美麗的湖泊，你會？", options:[{text:"下水游泳", score:4,next:9},{text:"在湖邊拍照", score:3,next:10}]},
-  { text: "夜晚看到流星，你會？", options:[{text:"許願", score:4,next:11},{text:"靜靜欣賞", score:3,next:12}]},
-  { text: "朋友邀你冒險，你會？", options:[{text:"馬上答應", score:4,next:13},{text:"先考慮", score:3,next:14}]},
-  { text: "下雨時你會？", options:[{text:"撐傘散步", score:3,next:"A"},{text:"在家看書", score:4,next:"A"}]},
-  { text: "看到有人需要幫助，你會？", options:[{text:"主動幫助", score:4,next:"B"},{text:"觀察再行動", score:3,next:"B"}]},
-  { text: "遇到困難你會？", options:[{text:"迎難而上", score:4,next:"C"},{text:"找方法避開", score:3,next:"C"}]},
-  { text: "假日你喜歡？", options:[{text:"戶外活動", score:4,next:"D"},{text:"宅在家", score:3,next:"D"}]},
-  { text: "收到禮物你會？", options:[{text:"很開心表達感謝", score:4,next:"A"},{text:"默默珍惜", score:3,next:"A"}]},
-  { text: "面對挑戰你會？", options:[{text:"勇敢面對", score:4,next:"B"},{text:"先觀察情況", score:3,next:"B"}]},
-  { text: "晚間你喜歡做什麼？", options:[{text:"散步思考", score:3,next:"C"},{text:"玩遊戲放鬆", score:4,next:"C"}]},
-  { text: "朋友邀請你聚會，你會？", options:[{text:"熱情參加", score:4,next:"D"},{text:"婉拒休息", score:3,next:"D"}]}
-];
+  // --- 心理測驗題目 ---
+  const questions = [
+    { text: "你走在森林裡，前方出現一條分岔路，你會？", options: [{text:"左邊明亮的路", score:4,next:1},{text:"右邊幽暗小徑", score:2,next:2}]},
+    { text: "光亮的路上你發現一隻小貓，你會？", options:[{text:"帶回家照顧", score:4,next:3},{text:"幫牠包紮後離開", score:3,next:4}]},
+    { text: "幽暗小徑聽到奇怪聲音，你會？", options:[{text:"走向聲音", score:4,next:5},{text:"轉身離開", score:2,next:6}]},
+    { text: "你遇到一個迷路的小孩，你會？", options:[{text:"帶他回家", score:4,next:7},{text:"幫忙指路", score:3,next:8}]},
+    { text: "看到美麗的湖泊，你會？", options:[{text:"下水游泳", score:4,next:9},{text:"在湖邊拍照", score:3,next:10}]},
+    { text: "夜晚看到流星，你會？", options:[{text:"許願", score:4,next:11},{text:"靜靜欣賞", score:3,next:12}]},
+    { text: "朋友邀你冒險，你會？", options:[{text:"馬上答應", score:4,next:13},{text:"先考慮", score:3,next:14}]},
+    { text: "下雨時你會？", options:[{text:"撐傘散步", score:3,next:"A"},{text:"在家看書", score:4,next:"A"}]},
+    { text: "看到有人需要幫助，你會？", options:[{text:"主動幫助", score:4,next:"B"},{text:"觀察再行動", score:3,next:"B"}]},
+    { text: "遇到困難你會？", options:[{text:"迎難而上", score:4,next:"C"},{text:"找方法避開", score:3,next:"C"}]},
+    { text: "假日你喜歡？", options:[{text:"戶外活動", score:4,next:"D"},{text:"宅在家", score:3,next:"D"}]},
+    { text: "收到禮物你會？", options:[{text:"很開心表達感謝", score:4,next:"A"},{text:"默默珍惜", score:3,next:"A"}]},
+    { text: "面對挑戰你會？", options:[{text:"勇敢面對", score:4,next:"B"},{text:"先觀察情況", score:3,next:"B"}]},
+    { text: "晚間你喜歡做什麼？", options:[{text:"散步思考", score:3,next:"C"},{text:"玩遊戲放鬆", score:4,next:"C"}]},
+    { text: "朋友邀請你聚會，你會？", options:[{text:"熱情參加", score:4,next:"D"},{text:"婉拒休息", score:3,next:"D"}]}
+  ];
 
-const results = {
-  A:"🌸 你是溫柔細膩，總為他人付出。",
-  B:"🌿 你懂得界線，不會過度消耗自己。",
-  C:"🔥 你喜歡冒險，樂於挑戰未知。",
-  D:"🌙 你謹慎敏銳，知道保護與放下。"
-};
-
-const bubbles = {
-  start:"嗨～準備好了嗎？",
-  question:["慢慢想也可以喔～","這樣的選擇看得出妳的個性","別緊張，我都在這陪妳"],
-  result:["測完了～想知道結果嗎？✨","這樣的妳，我覺得很好呀🌷"]
-};
-
-let currentQuestion=0;
-let totalScore=0;
-
-const questionEl=document.getElementById("question");
-const optionsEl=document.getElementById("options");
-const resultEl=document.getElementById("result");
-const restartBtn=document.getElementById("restart");
-const bubbleEl=document.getElementById("bubble");
-const historyList=document.getElementById("historyList");
-const clearHistoryBtn=document.getElementById("clearHistory");
-
-function showBubble(text){
-  bubbleEl.classList.remove("active");
-  setTimeout(()=>{ bubbleEl.innerText=text; bubbleEl.classList.add("active"); },200);
-}
-
-function showQuestion(index){
-  const q=questions[index];
-  questionEl.innerText=`(${index+1}/15) ${q.text}`;
-  optionsEl.innerHTML="";
-  q.options.forEach(option=>{
-    const btn=document.createElement("button");
-    btn.textContent=option.text;
-    btn.onclick=()=>handleAnswer(option);
-    optionsEl.appendChild(btn);
-  });
-  showBubble(bubbles.question[Math.floor(Math.random()*bubbles.question.length)]);
-}
-
-function animateScore(finalScore){
-  let current=0;
-  const anim=setInterval(()=>{
-    current++;
-    resultEl.innerText=`分數: ${current}`;
-    if(current>=finalScore) clearInterval(anim);
-  },50);
-}
-
-async function handleAnswer(option){
-  totalScore+=option.score;
-  if(typeof option.next==="number") { currentQuestion=option.next; showQuestion(currentQuestion);}
-  else { await showResult(option.next);}
-}
-
-async function showResult(key){
-  questionEl.style.display="none";
-  optionsEl.style.display="none";
-  resultEl.style.display="block";
-  restartBtn.style.display="inline-block";
-  resultEl.innerText=results[key];
-  animateScore(totalScore);
-
-  const record = {
-    username: prompt("請輸入您的名稱","+0")||"+0",
-    score: totalScore,
-    date: new Date().toLocaleString(),
-    result: results[key]
+  const results = {
+    A:"🌸 你是溫柔細膩，總為他人付出。",
+    B:"🌿 你懂得界線，不會過度消耗自己。",
+    C:"🔥 你喜歡冒險，樂於挑戰未知。",
+    D:"🌙 你謹慎敏銳，知道保護與放下。"
   };
 
-  // 存到 Firebase
-  await addDoc(historyCollection,record);
+  const bubbles = {
+    start:"嗨～準備好了嗎？",
+    question:["慢慢想也可以喔～","這樣的選擇看得出妳的個性","別緊張，我都在這陪妳"],
+    result:["測完了～想知道結果嗎？✨","這樣的妳，我覺得很好呀🌷"]
+  };
 
-  // 存到 localStorage
-  const history = JSON.parse(localStorage.getItem("quizHistory")||"[]");
-  history.push(record);
-  localStorage.setItem("quizHistory",JSON.stringify(history));
-  updateHistory();
-  showBubble(bubbles.result[Math.floor(Math.random()*bubbles.result.length)]);
-}
+  let currentQuestion = 0;
+  let totalScore = 0;
 
-function updateHistory(){
-  const history = JSON.parse(localStorage.getItem("quizHistory")||"[]");
-  historyList.innerHTML="";
-  history.forEach(item=>{
-    const div=document.createElement("div");
-    div.className="history-item";
-    div.innerText=`${item.date} | 分數: ${item.score} | 結果: ${item.result} | 使用者: ${item.username}`;
-    historyList.appendChild(div);
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const resultEl = document.getElementById("result");
+  const restartBtn = document.getElementById("restart");
+  const bubbleEl = document.getElementById("bubble");
+  const historyList = document.getElementById("historyList");
+  const clearHistoryBtn = document.getElementById("clearHistory");
+
+  function showBubble(text){
+    bubbleEl.classList.remove("active");
+    setTimeout(()=>{ bubbleEl.innerText=text; bubbleEl.classList.add("active"); },200);
+  }
+
+  function showQuestion(index){
+    const q = questions[index];
+    questionEl.innerText = `(${index+1}/${questions.length}) ${q.text}`;
+    optionsEl.innerHTML = "";
+    q.options.forEach(option=>{
+      const btn = document.createElement("button");
+      btn.textContent = option.text;
+      btn.onclick = ()=>handleAnswer(option);
+      optionsEl.appendChild(btn);
+    });
+    showBubble(bubbles.question[Math.floor(Math.random()*bubbles.question.length)]);
+  }
+
+  function animateScore(finalScore){
+    let current=0;
+    const anim = setInterval(()=>{
+      current++;
+      resultEl.innerText = `分數: ${current}`;
+      if(current>=finalScore) clearInterval(anim);
+    },50);
+  }
+
+  async function handleAnswer(option){
+    totalScore += option.score;
+    if(typeof option.next==="number") { currentQuestion=option.next; showQuestion(currentQuestion);}
+    else { await showResult(option.next);}
+  }
+
+  async function showResult(key){
+    questionEl.style.display="none";
+    optionsEl.style.display="none";
+    resultEl.style.display="block";
+    restartBtn.style.display="inline-block";
+    resultEl.innerText = results[key];
+    animateScore(totalScore);
+
+    try{
+      await addDoc(collection(db,"quizHistory"),{
+        date: new Date().toLocaleString(),
+        score: totalScore,
+        result: results[key]
+      });
+    }catch(e){ console.error("存資料失敗",e);}
+
+    await updateHistory();
+    showBubble(bubbles.result[Math.floor(Math.random()*bubbles.result.length)]);
+  }
+
+  async function updateHistory(){
+    historyList.innerHTML="";
+    const q = query(collection(db,"quizHistory"), orderBy("date","desc"));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(docSnap=>{
+      const item = docSnap.data();
+      const div = document.createElement("div");
+      div.className="history-item";
+      div.innerText=`${item.date} | 分數: ${item.score} | 結果: ${item.result}`;
+      historyList.appendChild(div);
+    });
+  }
+
+  restartBtn.addEventListener("click",()=>{
+    currentQuestion=0;
+    totalScore=0;
+    questionEl.style.display="block";
+    optionsEl.style.display="block";
+    resultEl.style.display="none";
+    restartBtn.style.display="none";
+    showQuestion(currentQuestion);
   });
-}
 
-restartBtn.addEventListener("click",()=>{
-  currentQuestion=0;
-  totalScore=0;
-  questionEl.style.display="block";
-  optionsEl.style.display="block";
-  resultEl.style.display="none";
-  restartBtn.style.display="none";
-  showQuestion(currentQuestion);
-});
+  clearHistoryBtn.addEventListener("click", async ()=>{
+    const qSnap = await getDocs(collection(db,"quizHistory"));
+    for(const docSnap of qSnap.docs){
+      await deleteDoc(doc(db,"quizHistory",docSnap.id));
+    }
+    historyList.innerHTML="";
+  });
 
-clearHistoryBtn.addEventListener("click",()=>{
-  localStorage.removeItem("quizHistory");
   updateHistory();
-});
-
-updateHistory();
-showQuestion(currentQuestion);
+  showQuestion(currentQuestion);
 </script>
 </body>
 </html>
