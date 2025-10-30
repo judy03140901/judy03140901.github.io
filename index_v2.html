@@ -70,9 +70,9 @@ h1 { color: #6650a4; font-size: 24px; margin-bottom: 20px; }
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-// ✅ 使用你提供的 firebaseConfig
+// Firebase 設定
 const firebaseConfig = {
   apiKey: "AIzaSyCf0dJj901z6JyFp1dEfBufrBtiztyjQqo",
   authDomain: "psych-test-house.firebaseapp.com",
@@ -85,8 +85,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// 格式化日期 YYYY-MM-DD HH:mm
+function formatDate(date) {
+  const d = new Date(date);
+  return d.getFullYear() + "-" +
+    String(d.getMonth()+1).padStart(2,'0') + "-" +
+    String(d.getDate()).padStart(2,'0') + " " +
+    String(d.getHours()).padStart(2,'0') + ":" +
+    String(d.getMinutes()).padStart(2,'0');
+}
+
 // -------------------------
-// 測驗題目
+// 測驗題目與結果
 const questions = [
   { text: "你走在森林裡，前方出現一條分岔路，你會？", options: [{text:"左邊明亮的路", score:4,next:1},{text:"右邊幽暗小徑", score:2,next:2}]},
   { text: "光亮的路上你發現一隻小貓，你會？", options:[{text:"帶回家照顧", score:4,next:3},{text:"幫牠包紮後離開", score:3,next:4}]},
@@ -121,6 +131,7 @@ const bubbles = {
 let currentQuestion = 0;
 let totalScore = 0;
 
+// DOM 元素
 const questionEl = document.getElementById("question");
 const optionsEl = document.getElementById("options");
 const resultEl = document.getElementById("result");
@@ -129,6 +140,8 @@ const bubbleEl = document.getElementById("bubble");
 const historyList = document.getElementById("historyList");
 const clearHistoryBtn = document.getElementById("clearHistory");
 
+// -------------------------
+// 功能函數
 function showBubble(text){
   bubbleEl.classList.remove("active");
   setTimeout(()=>{ bubbleEl.innerText=text; bubbleEl.classList.add("active"); },200);
@@ -159,9 +172,7 @@ function animateScore(finalScore){
 async function handleAnswer(option){
   totalScore += option.score;
   if(typeof option.next==="number") { currentQuestion=option.next; showQuestion(currentQuestion);}
-  else {
-    await showResult(option.next);
-  }
+  else { await showResult(option.next);}
 }
 
 async function showResult(key){
@@ -172,17 +183,15 @@ async function showResult(key){
   resultEl.innerText = results[key];
   animateScore(totalScore);
 
-  // 儲存到 Firebase
+  // 存 Firebase
   try{
     await addDoc(collection(db,"quizResults"),{
-      username:"+0",
       score:totalScore,
       result:results[key],
-      date:new Date().toISOString()
+      date:formatDate(new Date())
     });
   }catch(e){ console.error(e); }
 
-  // 讀取 Firebase 歷史紀錄
   await updateHistory();
   showBubble(bubbles.result[Math.floor(Math.random()*bubbles.result.length)]);
 }
@@ -200,6 +209,8 @@ async function updateHistory(){
   });
 }
 
+// -------------------------
+// 事件
 restartBtn.addEventListener("click",()=>{
   currentQuestion=0;
   totalScore=0;
@@ -212,12 +223,16 @@ restartBtn.addEventListener("click",()=>{
 
 clearHistoryBtn.addEventListener("click",async ()=>{
   const snapshot = await getDocs(collection(db,"quizResults"));
-  snapshot.forEach(async doc => { await doc.ref.delete(); });
+  for (const docSnap of snapshot.docs){
+    await deleteDoc(doc(db,"quizResults",docSnap.id));
+  }
   updateHistory();
 });
 
+// 初始化
 updateHistory();
 showQuestion(currentQuestion);
 </script>
+
 </body>
 </html>
