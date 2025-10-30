@@ -5,243 +5,124 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🌙 心理測驗小屋</title>
 <style>
-body {
-  font-family: "Noto Sans TC", sans-serif;
-  background: linear-gradient(180deg, #f8f5ff, #e5e0ff);
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  margin: 0;
-  padding-top: 40px;
-  overflow-x: hidden;
-}
-.container {
-  background: #ffffffdd;
-  backdrop-filter: blur(8px);
-  padding: 40px;
-  border-radius: 20px;
-  width: 420px;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  position: relative;
-}
-h1 { color: #6650a4; font-size: 24px; margin-bottom: 20px; }
-.question { font-size: 18px; color: #444; margin-bottom: 20px; min-height: 60px; transition: opacity 0.5s ease; }
-.options button {
-  background: #b4a8ff; color: #fff; border: none; padding: 10px 16px;
-  margin: 6px; border-radius: 10px; cursor: pointer; font-size: 16px; transition: background 0.3s ease;
-}
-.options button:hover { background: #8e7bff; }
-.result { display: none; font-size: 18px; color: #333; margin-top: 20px; }
-.restart-btn { background: #ffd2e8; color: #333; border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; margin-top: 20px; }
-.mascot { position: absolute; right: -150px; bottom: 0; width: 120px; height: 160px; background: url('https://cdn-icons-png.flaticon.com/512/4712/4712104.png') no-repeat center/contain; animation: float 3s ease-in-out infinite; }
-@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-.speech-bubble {
-  position: absolute; right: -220px; bottom: 120px; background: #fff; color: #333; border-radius: 12px;
-  padding: 10px 14px; width: 160px; text-align: left; box-shadow: 0 4px 8px rgba(0,0,0,0.1); opacity: 0; transform: scale(0.8); transition: all 0.4s ease;
-}
-.speech-bubble.active { opacity: 1; transform: scale(1); }
-.speech-bubble::after { content: ""; position: absolute; right: -10px; bottom: 10px; border-width: 8px; border-style: solid; border-color: transparent transparent transparent #fff; }
-.history { margin-top: 30px; text-align: left; font-size: 14px; }
-.history-header { font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-.history-header button { background: #ffaec5; border: none; border-radius: 6px; padding: 2px 6px; cursor: pointer; font-size: 12px; color: #333; }
-.history-item { margin-top: 6px; }
+/* …保留原本的 CSS … */
+body { font-family: "Noto Sans TC", sans-serif; background: linear-gradient(180deg,#f8f5ff,#e5e0ff); display:flex; justify-content:center; align-items:flex-start; min-height:100vh; margin:0; padding-top:40px; overflow-x:hidden;}
+.container {background:#ffffffdd; backdrop-filter:blur(8px); padding:40px; border-radius:20px; width:420px; text-align:center; box-shadow:0 4px 20px rgba(0,0,0,0.1); position:relative;}
+h1 { color:#6650a4; font-size:24px; margin-bottom:20px; }
+.question { font-size:18px; color:#444; margin-bottom:20px; min-height:60px; transition:opacity 0.5s ease;}
+.options button { background:#b4a8ff; color:#fff; border:none; padding:10px 16px; margin:6px; border-radius:10px; cursor:pointer; font-size:16px; transition:background 0.3s ease;}
+.options button:hover { background:#8e7bff; }
+.result { display:none; font-size:18px; color:#333; margin-top:20px; }
+.restart-btn { background:#ffd2e8; color:#333; border:none; padding:8px 16px; border-radius:10px; cursor:pointer; margin-top:20px; }
+.mascot { position:absolute; right:-150px; bottom:0; width:120px; height:160px; background:url('https://cdn-icons-png.flaticon.com/512/4712/4712104.png') no-repeat center/contain; animation:float 3s ease-in-out infinite;}
+@keyframes float {0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.speech-bubble { position:absolute; right:-220px; bottom:120px; background:#fff; color:#333; border-radius:12px; padding:10px 14px; width:160px; text-align:left; box-shadow:0 4px 8px rgba(0,0,0,0.1); opacity:0; transform:scale(0.8); transition:all 0.4s ease;}
+.speech-bubble.active {opacity:1; transform:scale(1);}
+.speech-bubble::after {content:""; position:absolute; right:-10px; bottom:10px; border-width:8px; border-style:solid; border-color:transparent transparent transparent #fff;}
+.history { margin-top:30px; text-align:left; font-size:14px; }
+.history-header { font-weight:bold; display:flex; justify-content:space-between; align-items:center; }
+.history-header button { background:#ffaec5; border:none; border-radius:6px; padding:2px 6px; cursor:pointer; font-size:12px; color:#333; }
+.history-item { margin-top:6px; }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>🌙 心理測驗小屋</h1>
-  <div id="question" class="question"></div>
-  <div id="options" class="options"></div>
-  <div id="result" class="result"></div>
-  <button id="restart" class="restart-btn" style="display:none;">重新測驗</button>
-  <div class="mascot"></div>
-  <div id="bubble" class="speech-bubble">嗨～準備好了嗎？</div>
-  <div class="history">
-    <div class="history-header">
-      歷史紀錄
-      <button id="clearHistory">清除紀錄</button>
-    </div>
-    <div id="historyList"></div>
+<h1>🌙 心理測驗小屋</h1>
+<div id="question" class="question"></div>
+<div id="options" class="options"></div>
+<div id="result" class="result"></div>
+<button id="restart" class="restart-btn" style="display:none;">重新測驗</button>
+<div class="mascot"></div>
+<div id="bubble" class="speech-bubble">嗨～準備好了嗎？</div>
+<div class="history">
+  <div class="history-header">
+    歷史紀錄
+    <button id="clearHistory">清除紀錄</button>
   </div>
+  <div id="historyList"></div>
+</div>
 </div>
 
 <script type="module">
-  // Firebase SDK
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+// Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-  // Firebase 配置
-  const firebaseConfig = {
-    apiKey: "AIzaSyCf0dJj901z6JyFp1dEfBufrBtiztyjQqo",
-    authDomain: "psych-test-house.firebaseapp.com",
-    projectId: "psych-test-house",
-    storageBucket: "psych-test-house.firebasestorage.app",
-    messagingSenderId: "1084908373457",
-    appId: "1:1084908373457:web:923e6ec4124f48b9a74cf0"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCf0dJj901z6JyFp1dEfBufrBtiztyjQqo",
+  authDomain: "psych-test-house.firebaseapp.com",
+  projectId: "psych-test-house",
+  storageBucket: "psych-test-house.firebasestorage.app",
+  messagingSenderId: "1084908373457",
+  appId: "1:1084908373457:web:923e6ec4124f48b9a74cf0"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  // 初始化 Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+const questions = [/* 你的 15 題資料 */];
+const results = { A:"🌸 你是溫柔細膩，總為他人付出。", B:"🌿 你懂得界線，不會過度消耗自己。", C:"🔥 你喜歡冒險，樂於挑戰未知。", D:"🌙 你謹慎敏銳，知道保護與放下。" };
+const bubbles = { start:"嗨～準備好了嗎？", question:["慢慢想也可以喔～","這樣的選擇看得出妳的個性","別緊張，我都在這陪妳"], result:["測完了～想知道結果嗎？✨","這樣的妳，我覺得很好呀🌷"] };
 
-  // 題目與結果
-  const questions = [
-    { text: "你走在森林裡，前方出現一條分岔路，你會？", options: [{text:"左邊明亮的路", score:4,next:1},{text:"右邊幽暗小徑", score:2,next:2}]},
-    { text: "光亮的路上你發現一隻小貓，你會？", options:[{text:"帶回家照顧", score:4,next:3},{text:"幫牠包紮後離開", score:3,next:4}]},
-    { text: "幽暗小徑聽到奇怪聲音，你會？", options:[{text:"走向聲音", score:4,next:5},{text:"轉身離開", score:2,next:6}]},
-    { text: "你遇到一個迷路的小孩，你會？", options:[{text:"帶他回家", score:4,next:7},{text:"幫忙指路", score:3,next:8}]},
-    { text: "看到美麗的湖泊，你會？", options:[{text:"下水游泳", score:4,next:9},{text:"在湖邊拍照", score:3,next:10}]},
-    { text: "夜晚看到流星，你會？", options:[{text:"許願", score:4,next:11},{text:"靜靜欣賞", score:3,next:12}]},
-    { text: "朋友邀你冒險，你會？", options:[{text:"馬上答應", score:4,next:13},{text:"先考慮", score:3,next:14}]},
-    { text: "下雨時你會？", options:[{text:"撐傘散步", score:3,next:"A"},{text:"在家看書", score:4,next:"A"}]},
-    { text: "看到有人需要幫助，你會？", options:[{text:"主動幫助", score:4,next:"B"},{text:"觀察再行動", score:3,next:"B"}]},
-    { text: "遇到困難你會？", options:[{text:"迎難而上", score:4,next:"C"},{text:"找方法避開", score:3,next:"C"}]},
-    { text: "假日你喜歡？", options:[{text:"戶外活動", score:4,next:"D"},{text:"宅在家", score:3,next:"D"}]},
-    { text: "收到禮物你會？", options:[{text:"很開心表達感謝", score:4,next:"A"},{text:"默默珍惜", score:3,next:"A"}]},
-    { text: "面對挑戰你會？", options:[{text:"勇敢面對", score:4,next:"B"},{text:"先觀察情況", score:3,next:"B"}]},
-    { text: "晚間你喜歡做什麼？", options:[{text:"散步思考", score:3,next:"C"},{text:"玩遊戲放鬆", score:4,next:"C"}]},
-    { text: "朋友邀請你聚會，你會？", options:[{text:"熱情參加", score:4,next:"D"},{text:"婉拒休息", score:3,next:"D"}]}
-  ];
+let currentQuestion=0,totalScore=0;
+const questionEl=document.getElementById("question");
+const optionsEl=document.getElementById("options");
+const resultEl=document.getElementById("result");
+const restartBtn=document.getElementById("restart");
+const bubbleEl=document.getElementById("bubble");
+const historyList=document.getElementById("historyList");
+const clearHistoryBtn=document.getElementById("clearHistory");
 
-  const results = {
-    A:"🌸 你是溫柔細膩，總為他人付出。",
-    B:"🌿 你懂得界線，不會過度消耗自己。",
-    C:"🔥 你喜歡冒險，樂於挑戰未知。",
-    D:"🌙 你謹慎敏銳，知道保護與放下。"
-  };
-
-  const bubbles = {
-    start:"嗨～準備好了嗎？",
-    question:["慢慢想也可以喔～","這樣的選擇看得出妳的個性","別緊張，我都在這陪妳"],
-    result:["測完了～想知道結果嗎？✨","這樣的妳，我覺得很好呀🌷"]
-  };
-
-  let currentQuestion = 0;
-  let totalScore = 0;
-
-  const questionEl = document.getElementById("question");
-  const optionsEl = document.getElementById("options");
-  const resultEl = document.getElementById("result");
-  const restartBtn = document.getElementById("restart");
-  const bubbleEl = document.getElementById("bubble");
-  const historyList = document.getElementById("historyList");
-  const clearHistoryBtn = document.getElementById("clearHistory");
-
-  function showBubble(text){
-    bubbleEl.classList.remove("active");
-    setTimeout(()=>{ bubbleEl.innerText=text; bubbleEl.classList.add("active"); },200);
-  }
-
-  function showQuestion(index){
-    const q = questions[index];
-    questionEl.innerText = `(${index+1}/${questions.length}) ${q.text}`;
-    optionsEl.innerHTML = "";
-    q.options.forEach(option=>{
-      const btn = document.createElement("button");
-      btn.textContent = option.text;
-      btn.onclick = ()=>handleAnswer(option);
-      optionsEl.appendChild(btn);
-    });
-    showBubble(bubbles.question[Math.floor(Math.random()*bubbles.question.length)]);
-  }
-
-  function animateScore(finalScore){
-    let current=0;
-    const anim = setInterval(()=>{
-      current++;
-      resultEl.innerText = `分數: ${current}`;
-      if(current>=finalScore) clearInterval(anim);
-    },50);
-  }
-
-  async function handleAnswer(option){
-    totalScore += option.score;
-    if(typeof option.next==="number") { 
-      currentQuestion=option.next; 
-      showQuestion(currentQuestion);
-    } else {
-      await showResult(option.next);
-    }
-  }
-
-  async function showResult(key){
-    questionEl.style.display="none";
-    optionsEl.style.display="none";
-    resultEl.style.display="block";
-    restartBtn.style.display="inline-block";
-    resultEl.innerText = results[key];
-    animateScore(totalScore);
-
-    // 1️⃣ 存 localStorage
-    const localHistory = JSON.parse(localStorage.getItem("quizHistory")||"[]");
-    const newRecord = {date:new Date().toISOString(),score:totalScore,result:results[key]};
-    localHistory.push(newRecord);
-    localStorage.setItem("quizHistory",JSON.stringify(localHistory));
-
-    // 2️⃣ 存 Firebase
-    try {
-      await addDoc(collection(db,"quizResults"), newRecord);
-    } catch(e) {
-      console.error("Firebase儲存失敗:", e);
-    }
-
-    updateHistory();
-    showBubble(bubbles.result[Math.floor(Math.random()*bubbles.result.length)]);
-  }
-
-  async function updateHistory(){
-    historyList.innerHTML="";
-
-    // 從 localStorage 讀
-    const localHistory = JSON.parse(localStorage.getItem("quizHistory")||"[]");
-
-    // 從 Firebase 讀並依日期排序
-    try {
-      const q = query(collection(db,"quizResults"), orderBy("date","desc"));
-      const querySnapshot = await getDocs(q);
-      const firebaseHistory = [];
-      querySnapshot.forEach(doc=>firebaseHistory.push(doc.data()));
-
-      const combined = [...firebaseHistory]; // 你也可以合併 localStorage + Firebase
-      combined.forEach(item=>{
-        const div = document.createElement("div");
-        div.className="history-item";
-        div.innerText=`${item.date} | 分數: ${item.score} | 結果: ${item.result}`;
-        historyList.appendChild(div);
-      });
-    } catch(e) {
-      console.error("Firebase讀取失敗:", e);
-      // 如果讀取失敗，也顯示 localStorage
-      localHistory.forEach(item=>{
-        const div = document.createElement("div");
-        div.className="history-item";
-        div.innerText=`${item.date} | 分數: ${item.score} | 結果: ${item.result}`;
-        historyList.appendChild(div);
-      });
-    }
-  }
-
-  restartBtn.addEventListener("click",()=>{
-    currentQuestion=0;
-    totalScore=0;
-    questionEl.style.display="block";
-    optionsEl.style.display="block";
-    resultEl.style.display="none";
-    restartBtn.style.display="none";
-    showQuestion(currentQuestion);
+function showBubble(text){ bubbleEl.classList.remove("active"); setTimeout(()=>{ bubbleEl.innerText=text; bubbleEl.classList.add("active"); },200);}
+function showQuestion(index){
+  const q = questions[index];
+  questionEl.innerText = `(${index+1}/${questions.length}) ${q.text}`;
+  optionsEl.innerHTML="";
+  q.options.forEach(opt=>{
+    const btn=document.createElement("button");
+    btn.textContent=opt.text;
+    btn.onclick=()=>handleAnswer(opt);
+    optionsEl.appendChild(btn);
   });
+  showBubble(bubbles.question[Math.floor(Math.random()*bubbles.question.length)]);
+}
+function animateScore(finalScore){
+  let current=0;
+  const anim=setInterval(()=>{ current++; resultEl.innerText=`分數: ${current}`; if(current>=finalScore) clearInterval(anim); },50);
+}
+async function saveToFirebase(entry){
+  try { await addDoc(collection(db,"quizHistory"),entry); } catch(e){ console.log("Firebase error:",e); }
+}
+function handleAnswer(option){
+  totalScore+=option.score;
+  if(typeof option.next==="number"){ currentQuestion=option.next; showQuestion(currentQuestion);}
+  else{ showResult(option.next);}
+}
+function showResult(key){
+  questionEl.style.display="none"; optionsEl.style.display="none"; resultEl.style.display="block"; restartBtn.style.display="inline-block";
+  resultEl.innerText = results[key]; animateScore(totalScore);
 
-  clearHistoryBtn.addEventListener("click",()=>{
-    localStorage.removeItem("quizHistory");
-    updateHistory();
-  });
-
-  // 初始化
+  const entry={date:new Date().toLocaleString(),score:totalScore,result:results[key]};
+  const history=JSON.parse(localStorage.getItem("quizHistory")||"[]");
+  history.push(entry); localStorage.setItem("quizHistory",JSON.stringify(history));
+  saveToFirebase(entry); // 嘗試存 Firebase，不會阻塞
   updateHistory();
-  showQuestion(currentQuestion);
+  showBubble(bubbles.result[Math.floor(Math.random()*bubbles.result.length)]);
+}
+function updateHistory(){
+  const history=JSON.parse(localStorage.getItem("quizHistory")||"[]");
+  historyList.innerHTML="";
+  history.forEach(item=>{
+    const div=document.createElement("div");
+    div.className="history-item";
+    div.innerText=`${item.date} | 分數: ${item.score} | 結果: ${item.result}`;
+    historyList.appendChild(div);
+  });
+}
+restartBtn.addEventListener("click",()=>{ currentQuestion=0; totalScore=0; questionEl.style.display="block"; optionsEl.style.display="block"; resultEl.style.display="none"; restartBtn.style.display="none"; showQuestion(currentQuestion);});
+clearHistoryBtn.addEventListener("click",()=>{
+  localStorage.removeItem("quizHistory"); updateHistory();
+});
+updateHistory(); showQuestion(currentQuestion);
 </script>
-
 </body>
 </html>
