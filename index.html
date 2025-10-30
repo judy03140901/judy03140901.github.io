@@ -67,7 +67,25 @@ h1 { color: #6650a4; font-size: 24px; margin-bottom: 20px; }
   </div>
 </div>
 
-<script>
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+// Firebase 配置（改成你的）
+ const firebaseConfig = {
+    apiKey: "AIzaSyCf0dJj901z6JyFp1dEfBufrBtiztyjQqo",
+    authDomain: "psych-test-house.firebaseapp.com",
+    projectId: "psych-test-house",
+    storageBucket: "psych-test-house.firebasestorage.app",
+    messagingSenderId: "1084908373457",
+    appId: "1:1084908373457:web:923e6ec4124f48b9a74cf0"
+  };
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const historyCollection = collection(db,"quizHistory");
+
 const questions = [
   { text: "你走在森林裡，前方出現一條分岔路，你會？", options: [{text:"左邊明亮的路", score:4,next:1},{text:"右邊幽暗小徑", score:2,next:2}]},
   { text: "光亮的路上你發現一隻小貓，你會？", options:[{text:"帶回家照顧", score:4,next:3},{text:"幫牠包紮後離開", score:3,next:4}]},
@@ -99,16 +117,16 @@ const bubbles = {
   result:["測完了～想知道結果嗎？✨","這樣的妳，我覺得很好呀🌷"]
 };
 
-let currentQuestion = 0;
-let totalScore = 0;
+let currentQuestion=0;
+let totalScore=0;
 
-const questionEl = document.getElementById("question");
-const optionsEl = document.getElementById("options");
-const resultEl = document.getElementById("result");
-const restartBtn = document.getElementById("restart");
-const bubbleEl = document.getElementById("bubble");
-const historyList = document.getElementById("historyList");
-const clearHistoryBtn = document.getElementById("clearHistory");
+const questionEl=document.getElementById("question");
+const optionsEl=document.getElementById("options");
+const resultEl=document.getElementById("result");
+const restartBtn=document.getElementById("restart");
+const bubbleEl=document.getElementById("bubble");
+const historyList=document.getElementById("historyList");
+const clearHistoryBtn=document.getElementById("clearHistory");
 
 function showBubble(text){
   bubbleEl.classList.remove("active");
@@ -116,13 +134,13 @@ function showBubble(text){
 }
 
 function showQuestion(index){
-  const q = questions[index];
-  questionEl.innerText = `(${index+1}/15) ${q.text}`;
-  optionsEl.innerHTML = "";
+  const q=questions[index];
+  questionEl.innerText=`(${index+1}/15) ${q.text}`;
+  optionsEl.innerHTML="";
   q.options.forEach(option=>{
-    const btn = document.createElement("button");
-    btn.textContent = option.text;
-    btn.onclick = ()=>handleAnswer(option);
+    const btn=document.createElement("button");
+    btn.textContent=option.text;
+    btn.onclick=()=>handleAnswer(option);
     optionsEl.appendChild(btn);
   });
   showBubble(bubbles.question[Math.floor(Math.random()*bubbles.question.length)]);
@@ -130,29 +148,40 @@ function showQuestion(index){
 
 function animateScore(finalScore){
   let current=0;
-  const anim = setInterval(()=>{
+  const anim=setInterval(()=>{
     current++;
-    resultEl.innerText = `分數: ${current}`;
+    resultEl.innerText=`分數: ${current}`;
     if(current>=finalScore) clearInterval(anim);
   },50);
 }
 
-function handleAnswer(option){
-  totalScore += option.score;
+async function handleAnswer(option){
+  totalScore+=option.score;
   if(typeof option.next==="number") { currentQuestion=option.next; showQuestion(currentQuestion);}
-  else { showResult(option.next);}
+  else { await showResult(option.next);}
 }
 
-function showResult(key){
+async function showResult(key){
   questionEl.style.display="none";
   optionsEl.style.display="none";
   resultEl.style.display="block";
   restartBtn.style.display="inline-block";
-  resultEl.innerText = results[key];
+  resultEl.innerText=results[key];
   animateScore(totalScore);
 
+  const record = {
+    username: prompt("請輸入您的名稱","+0")||"+0",
+    score: totalScore,
+    date: new Date().toLocaleString(),
+    result: results[key]
+  };
+
+  // 存到 Firebase
+  await addDoc(historyCollection,record);
+
+  // 存到 localStorage
   const history = JSON.parse(localStorage.getItem("quizHistory")||"[]");
-  history.push({date:new Date().toLocaleString(),score:totalScore,result:results[key]});
+  history.push(record);
   localStorage.setItem("quizHistory",JSON.stringify(history));
   updateHistory();
   showBubble(bubbles.result[Math.floor(Math.random()*bubbles.result.length)]);
@@ -162,9 +191,9 @@ function updateHistory(){
   const history = JSON.parse(localStorage.getItem("quizHistory")||"[]");
   historyList.innerHTML="";
   history.forEach(item=>{
-    const div = document.createElement("div");
+    const div=document.createElement("div");
     div.className="history-item";
-    div.innerText=`${item.date} | 分數: ${item.score} | 結果: ${item.result}`;
+    div.innerText=`${item.date} | 分數: ${item.score} | 結果: ${item.result} | 使用者: ${item.username}`;
     historyList.appendChild(div);
   });
 }
